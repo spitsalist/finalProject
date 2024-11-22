@@ -1,0 +1,54 @@
+# Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+*.log.*
+*.out
+*.pid
+*.pid.lock
+lerna-debug.log*
+
+# Coverage directory used by Jest or other testing tools
+coverage
+
+# Dependency directories
+.bower_components
+jspm_packages
+
+# Build and output directories
+dist
+build
+public
+
+# IDE and editor specific files
+.idea/
+.vscode/
+.vscode-test/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+*.sln
+*.njsproj
+*.suo
+*.ntvs*
+
+# Temporary files
+*.tmp
+*.temp
+
+# PM2 logs and dumps
+pm2.log
+*.pm2*
