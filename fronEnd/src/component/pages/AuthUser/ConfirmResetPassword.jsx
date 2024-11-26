@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Typography, Box, Alert } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 import { InputField } from "./CustomTextField";
 import { confirmResetPassword } from "../../../api/auth";
 
@@ -32,7 +32,7 @@ export const ConfirmResetPassword = () => {
     try {
       await confirmResetPassword(token, password); 
       setSuccessMessage("Your password has been reset successfully!");
-      setTimeout(() => navigate("/login"), 3000); 
+      setTimeout(() => navigate("/login"),{replace:true}, 2000); 
     } catch (error) {
       console.error('Error during password reset:', error); 
 

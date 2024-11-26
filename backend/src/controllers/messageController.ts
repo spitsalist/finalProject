@@ -4,6 +4,7 @@ import { sendError, sendSuccess } from "../utils/helpers/responseHelper";
 import { messageNotification } from "../services/notificationService/notificationService";
 import { Response } from "express";
 import { handleFileUpload } from "../services/fileService";
+import { io } from "../services/soketService/socket";
 
 export const sendMessage = async (req: any, res: Response) => {
     try {
@@ -31,6 +32,13 @@ export const sendMessage = async (req: any, res: Response) => {
 
     await messageNotification(userId, 'message', `${req.user.username} sent you a message`, senderId, newMessage._id as string)
 
+    io.to(userId).emit('newMessage', {
+        sender: senderId,
+        message: newMessage.message,
+        content: newMessage.content,
+        // file: newMessage.file,
+        // createdAt: newMessage.createdAt,
+    })
         return sendSuccess(res, {newMessage}, 'Message sent successfully', 200)
     } catch (error:any) {
         return sendError(res,'Error sending message', 500, error)
@@ -39,12 +47,12 @@ export const sendMessage = async (req: any, res: Response) => {
 
 export const getMessage = async (req: any, res: Response) => {
     try {
-        const { userId } = req.params;
+        const { recipientId } = req.params;
         const currentUserId = req.user.id;
         const messages = await Message.find({
             $or: [
-                { sender: currentUserId, recipient: userId },
-                { sender: userId, recipient: currentUserId }
+                { sender: currentUserId, recipient: recipientId },
+                { sender: recipientId, recipient: currentUserId }
             ]
         })
         .populate('sender', 'username')

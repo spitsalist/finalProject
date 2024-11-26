@@ -3,8 +3,6 @@ import jwt  from 'jsonwebtoken'
 import { sendSuccess, sendError } from '../utils/helpers/responseHelper'
 import {  Response} from 'express'
 
-
-
 export const register = async (req:any, res:Response) => {
     try{
         const {fullName, username, email, password} = req.body

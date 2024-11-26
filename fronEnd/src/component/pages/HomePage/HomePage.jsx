@@ -11,25 +11,25 @@ import { FollowButton } from '../../Buttons/FollowButton/FollowButton';
 import { PostCard } from './PostCard';
 
 export const PostHeader = ({ user, currentUserId }) => {
-
+// console.log(user)
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px', justifyContent: 'space-between' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar 
-          src={user.image || ''} 
-          alt={user.username || ''} 
+          src={user?.image || ''} 
+          alt={user?.username || ''} 
           sx={{ marginRight: '10px' }} 
         />
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-            {user.username || ''}
+            {user?.username || ''}
           </Typography>
         </Box>
       </Box>
       <FollowButton 
-        userId={user._id} 
-        initialFollowing={user.isFollowing} 
-        username={user.username} 
+        userId={user?._id} 
+        initialFollowing={user?.isFollowing} 
+        username={user?.username} 
         currentUserId={currentUserId}
       />
     </Box>

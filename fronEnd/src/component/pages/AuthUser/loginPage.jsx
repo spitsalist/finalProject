@@ -3,7 +3,7 @@ import {  Button, Typography, Box, Link } from "@mui/material";
 import ichLogo from '../../../assets/ICHGRA.svg';
 import bg from "../../../assets/Background.svg";
 import { login } from '../../../api/auth';
-import { replace, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SectionDivider } from './SectionDivider';
 import { InputField } from './CustomTextField';
 

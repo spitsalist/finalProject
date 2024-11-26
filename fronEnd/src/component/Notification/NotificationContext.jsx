@@ -7,7 +7,6 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-
     const fetchNotifications = async () => {
       try{
         const response = await getNotifications();
@@ -17,7 +16,7 @@ export const NotificationProvider = ({ children }) => {
           console.error(response.message || 'error fetching notifications');
         }
       }catch(error){
-        console.error('error get notification')
+        console.error('error get notification', error)
       }
     }
     fetchNotifications()

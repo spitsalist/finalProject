@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
+
 export const login = async (email, password) => {
   try {
     const response = await axios.post(`${BASE_URL}/auth/login`, { email, password });
@@ -98,7 +99,19 @@ export const updateProfile = async (formData) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error updating profile:", error);
+    throw error;
+  }
+};
+
+export const fetchUsers = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${BASE_URL}/user/all`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("API response:", response.data);
+    return response.data; 
+  } catch (error) {
     throw error;
   }
 };
@@ -118,7 +131,6 @@ export const togglePrivacy = async (isPrivate) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error updating privacy:", error);
     throw error;
   }
 };
@@ -133,7 +145,6 @@ export const followUser = async (userToFollowId, username) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error following user:", error);
     throw error;
   }
 };
@@ -195,6 +206,7 @@ export const likeComment = async (commentId) => {
   }
 };
 
+
 export const unlikePost = async (postId) => {
   try {
     const token = localStorage.getItem("token");
@@ -208,6 +220,50 @@ export const unlikePost = async (postId) => {
     throw error;
   }
 };
+
+
+export const fetchMessages = async (recipientId, currentUserId) => {
+  try {
+    const token = localStorage.getItem('token'); 
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/messages/${recipientId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        currentUserId, 
+      },
+    });
+    return response.data; 
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    throw error;
+  }
+};
+
+export const chatSocket = io(`${import.meta.env.VITE_SOCKET_URL}/chat`, {
+  withCredentials: true,
+  transports: ["websocket", "polling"],
+  auth: {
+    token: localStorage.getItem("token"),
+  },
+});
+
+export const joinChatRoom = (roomId) => {
+  chatSocket.emit("joinChat", roomId);
+};
+
+export const sendChatMessage = (messageData) => {
+  chatSocket.emit("sendMessage", messageData);
+};
+
+export const subscribeToChatMessages = (callback) => {
+  chatSocket.on("newMessage", callback);
+};
+
+export const disconnectChatSocket = () => {
+  chatSocket.disconnect();
+};
+
 
 export const socket = io(SOCKET_URL, {
   withCredentials: true,

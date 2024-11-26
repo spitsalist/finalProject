@@ -20,14 +20,20 @@ import { NotificationList } from "../Notification/NotificationList";
 import { CreatePostModal } from "../pages/Post/createPost";
 import { Button } from "@mui/material";
 import { useNotifications } from "../Notification/NotificationContext";
+import { ChatSlideMenu } from "../Chat/ChatSlideMenu";
 
 const MenuIcon = ({ Icon, size = '30px',  }) => (
   <Icon sx={{ fontSize: size, }} />
 );
 
 export const SideMenu = () => {
+  const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
+  const handleChatOpen = () => setIsChatMenuOpen((prev) => !prev)
+  const handleChatClose = () => setIsChatMenuOpen(false);
   const {notifications} = useNotifications()
-  const unreadCount = notifications.filter((n) => !n.isRead).length
+  const unreadCount = Array.isArray(notifications)
+  ? notifications.filter((n) => !n.isRead).length
+  : 0;
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenModal = () => setIsModalOpen(true);
@@ -39,7 +45,7 @@ export const SideMenu = () => {
     {key:'home', text: "Home", icon: <img src={HomeIcon}/>, path: "/home" },
     {key: 'search', text: "Search", icon: <img src={SearchIcon} />, path: "/search", hasDropMenu: true },
     {key: "explore", text: "Explore", icon: <img src={ExploreIcon} />, path: "/explore" },
-    {key: "message", text: "Message", icon: <img src={ChatIcon} />, path: "/messages" },
+    {key: "message", text: "Message", icon: <img src={ChatIcon} />, action: handleChatOpen},
     { key: "notification",
       text: `Notification${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
       icon: <img src={NotificationsIcon} />,
@@ -147,7 +153,7 @@ export const SideMenu = () => {
       </DropMenu>
 
       <CreatePostModal isOpen={isModalOpen} onClose={handleCloseModal} />
-
+      <ChatSlideMenu isOpen={isChatMenuOpen} onClose={handleChatClose} />
       <Box sx={{ padding: "10px", marginTop: '60px' }}>
   <Button
     variant="outlined"

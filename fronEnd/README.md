@@ -33,8 +33,6 @@ Currently, two official plugins are available:
 - **Planned Fix**: Debug and fix the notification WebSocket events. Ensure notifications are properly stored in the database and displayed on the frontend.
 
 
-### **Chat**
-- **Problem**: The chat feature is not implemented.
 - **Planned Implementation**:
   - Real-time chat using WebSocket.
   - Integration with the user system for private messaging.

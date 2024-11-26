@@ -58,7 +58,16 @@ export const updateUserProfile = async (req: any, res: any) => {
       profileImage: user.profileImage,
     }, "Profile updated successfully");
   } catch (error) {
-    console.error("Error updating profile:", error);
     sendError(res, "Error updating profile", 500, error);
+  }
+};
+
+
+export const getAllUsers = async (_req: any, res: any) => {
+  try {
+    const users = await User.find().select("username fullName profileImage");
+    return sendSuccess(res, { users })
+  } catch (error: any) {
+    return sendError(res, "Error fetching users", 500, error);
   }
 };

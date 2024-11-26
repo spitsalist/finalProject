@@ -4,8 +4,8 @@ import { sendError, sendSuccess } from "../utils/helpers/responseHelper";
 
 export const updatePrivacy = async (req: any, res: any) => {
     try {
-      const userId = req.user.id;  // id из токена или сессии
-      const { isPrivate } = req.body;  // флаг, который прислал клиент
+      const userId = req.user.id;  
+      const { isPrivate } = req.body;  
       
       const user = await User.findById(userId);
       if (!user) return sendError(res,'user not found', 404)

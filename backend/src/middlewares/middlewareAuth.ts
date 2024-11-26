@@ -3,7 +3,6 @@ import jwt, { JwtPayload }  from 'jsonwebtoken';
 import { sendError } from '../utils/helpers/responseHelper';
 import { User } from '../models/User';
 
-
 export interface AuthUser extends Request {
     file?:Express.Multer.File;
     user?:  JwtPayload | any
