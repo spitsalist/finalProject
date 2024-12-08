@@ -1,69 +1,47 @@
+import {  Response } from "express";
 import { Message } from "../models/Message";
 import { User } from "../models/User";
-import { sendError, sendSuccess } from "../utils/helpers/responseHelper";
-import { messageNotification } from "../services/notificationService/notificationService";
-import { Response } from "express";
-import { handleFileUpload } from "../services/fileService";
 import { io } from "../services/soketService/socket";
+import { sendError, sendSuccess } from "../utils/helpers/responseHelper";
 
 export const sendMessage = async (req: any, res: Response) => {
-    try {
-        const { userId, message, content, fileId } = req.body;
-        const senderId = req.user.id;
-        const imageFile = req.file
+  try {
+    const { recipientId, message, content } = req.body; 
+    const senderId = req.user?.id; 
 
-        const user = await User.findById(userId)
-        if(!user){
-            return sendError(res, 'User not found', 404)
-        }
-        
-        const file = await handleFileUpload(imageFile, senderId)
-        if(file === null) return
-
-        const newMessage = new Message({
-            sender: senderId,
-            recipient: userId,
-            message,
-            content,
-            file:  fileId, //file ? file._id : null,
-            isRead: false,
-        })
-        await newMessage.save()
-
-    await messageNotification(userId, 'message', `${req.user.username} sent you a message`, senderId, newMessage._id as string)
-
-    io.to(userId).emit('newMessage', {
-        sender: senderId,
-        message: newMessage.message,
-        content: newMessage.content,
-        // file: newMessage.file,
-        // createdAt: newMessage.createdAt,
-    })
-        return sendSuccess(res, {newMessage}, 'Message sent successfully', 200)
-    } catch (error:any) {
-        return sendError(res,'Error sending message', 500, error)
+    if (!senderId) {
+      return sendError(res, "Sender ID is missing", 401);
     }
-}
 
-export const getMessage = async (req: any, res: Response) => {
-    try {
-        const { recipientId } = req.params;
-        const currentUserId = req.user.id;
-        const messages = await Message.find({
-            $or: [
-                { sender: currentUserId, recipient: recipientId },
-                { sender: recipientId, recipient: currentUserId }
-            ]
-        })
-        .populate('sender', 'username')
-        .populate('recipient', 'username')
-        .sort({createdAt: 1})
-
-        if (!messages) {
-            return sendError(res, 'No messages found', 404)
-          }
-        return sendSuccess(res, {messages}, 'Message recived succesfully', 200)
-    } catch (error:any) {
-        return sendError(res, 'Error receiving message', 500, error)
+    const recipient = await User.findById(recipientId);
+    if (!recipient) {
+      return sendError(res, "Recipient not found", 404);
     }
-}
+
+    const newMessage = new Message({
+      sender: senderId,
+      recipient: recipientId,
+      message,
+      content,
+      isRead: false,
+    });
+
+    await newMessage.save();
+
+    io.to(recipientId.toString()).emit("newMessage", {
+      id: newMessage._id,
+      sender: senderId,
+      recipient: recipientId,
+      message,
+      content,
+      isRead: false,
+      createdAt: newMessage.createdAt,
+      updatedAt: newMessage.updatedAt,
+    });
+
+    return sendSuccess(res, { message: newMessage }, "Message sent successfully", 201);
+  } catch (error) {
+    console.error("Error sending message:", error);
+    return sendError(res, "Failed to send message", 500, error);
+  }
+};

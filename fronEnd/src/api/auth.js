@@ -221,47 +221,88 @@ export const unlikePost = async (postId) => {
   }
 };
 
-
-export const fetchMessages = async (recipientId, currentUserId) => {
-  try {
-    const token = localStorage.getItem('token'); 
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/messages/${recipientId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        currentUserId, 
-      },
-    });
-    return response.data; 
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    throw error;
-  }
-};
-
-export const chatSocket = io(`${import.meta.env.VITE_SOCKET_URL}/chat`, {
-  withCredentials: true,
-  transports: ["websocket", "polling"],
+export const chatSocket = io(`${BASE_URL}`, {
   auth: {
     token: localStorage.getItem("token"),
   },
 });
 
-export const joinChatRoom = (roomId) => {
-  chatSocket.emit("joinChat", roomId);
+
+chatSocket.on("newMessage", (message) => {
+  // console.log(message); 
+  if (!message.sender || !message.recipient || !message.message) {
+    console.error("Invalid message structure:", message);
+  }
+});
+
+chatSocket.on("connect", () => {
+  console.log("Socket connected:", chatSocket.id);
+
+  chatSocket.on("currentUser", (response) => {
+    if (response.success) {
+      setCurrentUserId(response.userId);
+      setSelectedUserInfo(prev => ({
+        ...prev,
+        lastLogin: response.lastLogin
+      }));
+
+    } else {
+      console.error("Failed to retrieve current user ID", response.error);
+    }
+  });
+});
+
+chatSocket.on("updateLastLogin", ({ userId, lastLogin }) => {
+  console.log(`User ${userId} last login updated:`, lastLogin);
+});
+
+export const getLastLogin = (recipientId) =>
+  new Promise((resolve, reject) => {
+    chatSocket.emit("getLastLogin", { userId: recipientId }, (response) => {
+      if (response.success) {
+        // console.log(`Last login for user ${recipientId}:`, response.lastLogin);
+        resolve(response.lastLogin);
+      } else {
+        console.error("Failed to fetch last login:", response.error);
+        reject(response.error);
+      }
+    });
+  });
+
+export const fetchMessages = (recipientId, currentUserId) => {
+  return new Promise((resolve, reject) => {
+    chatSocket.emit("fetchMessages", { recipientId, currentUserId }, (response) => {
+      // console.log(response);
+      if (response.success) {
+        resolve(response.messages);
+      } else {
+        console.error("Error fetching messages:", response.error);
+        reject(response.error);
+      }
+    });
+  });
 };
 
-export const sendChatMessage = (messageData) => {
-  chatSocket.emit("sendMessage", messageData);
+export const sendMessage = (recipientId, message, callback) => {
+  chatSocket.emit("sendMessage", { recipientId, message }, (response) => {
+    // console.log("SendMessage ", response);
+    if (!response.success) {
+      console.error("Error sending message:", response.error);
+    }
+    callback(response);
+  });
 };
 
-export const subscribeToChatMessages = (callback) => {
-  chatSocket.on("newMessage", callback);
-};
-
-export const disconnectChatSocket = () => {
-  chatSocket.disconnect();
+export const markAsRead = (messageId, recipientId) => {
+  chatSocket.emit("markAsRead", { messageId, recipientId }, (response) => {
+    // callback(response);
+    if (!response.success) {
+      console.error(`Error marking message ${messageId} as read:`, response.error);
+    } else {
+      console.log(`Message ${messageId} marked as read.`);
+      chatSocket.emit('messageRead', {messageId})
+    }
+  });
 };
 
 

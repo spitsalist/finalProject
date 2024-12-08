@@ -7,4 +7,3 @@ export const postMessage  = Router()
 
 
 postMessage.post('/send',upload.single('image'), middlewareAuth, sendMessage)
-// postMessage.get('/:userId', middlewareAuth, getMessage)
