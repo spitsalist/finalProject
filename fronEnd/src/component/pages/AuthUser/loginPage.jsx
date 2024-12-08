@@ -17,8 +17,10 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const resultData = await login(email, password);
-      localStorage.setItem('token', resultData.data.token);
-      // console.log('Login successfully', data);
+      const { token } = resultData.data;
+      console.log('Login successfully', resultData.data);
+          localStorage.setItem('token', token);
+
       setTimeout(() => {
          navigate('/home', {replace:true});
       }, 2000)

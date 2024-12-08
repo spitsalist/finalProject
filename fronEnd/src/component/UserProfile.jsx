@@ -16,6 +16,7 @@ export const UserProfile = () => {
   useEffect(() => {
     const loadUserProfileAndPosts = async () => {
       try {
+        setLoading(true)
         const profileData = await fetchProfile(userId)
         setProfile(profileData);
 
