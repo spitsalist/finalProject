@@ -13,15 +13,7 @@ export const checkPostOwnership =async (res:Response, postId:string, userId:stri
 
         return sendError(res, "Post not found", 404)
     }
-    // if(!forLike && post.user.toString() !== userId){
-    //     console.log("User does not own the post:", userId);
 
-    //     return sendError(res,'You can only modify your own post',403 )
-    // }
-
-    // if (forLike === false && modifyingPost && post.user.toString() !== userId) {
-    //     return sendError(res, 'You can only modify your own post', 403);
-    // }
 
     if(forLike && post.user.toString() === userId){
         // console.log("User cannot like their own post:", userId);
@@ -32,7 +24,7 @@ export const checkPostOwnership =async (res:Response, postId:string, userId:stri
 
     return post
 }
-
+// if is subscribed ...
 // export const getAllPosts = async(_res:Response,followingIds?:string[])=>{
 //     const query = followingIds ? {user: {$in: followingIds}} : {}
 //         const posts = await Post.find(query)
@@ -46,16 +38,43 @@ export const checkPostOwnership =async (res:Response, postId:string, userId:stri
 // }
 
 
-export const getAllPosts = async (_res:any, userId:string[]) => {
-    const posts = await Post.find({ user: { $ne: userId } }) 
-      .populate("user")
-      .populate("likes")
-      .populate("comments")
-      .populate("image")
-      .sort({ createdAt: -1 });
-  
-    return posts;
-  };
+export const getAllPosts = async (_res: any, userId: string, forProfile: boolean = false) => {
+  const query = forProfile
+    ? { user: userId }
+    : { user: { $ne: userId } }
+
+  const posts = await Post.find(query)
+    .populate("user")
+    .populate("likes")
+    .populate("comments")
+    .populate("image")
+    .sort({ createdAt: -1 });
+
+    if(forProfile && (!posts || posts.length === 0)){
+      return[]
+    }
+
+  return posts;
+};
+
+// export const getAllPosts = async (_res: any, userId: string) => {
+//   // console.log(" userId:", userId);
+
+//   const posts = await Post.find({
+//       $and: [
+//           { user: { $ne: userId } }, 
+//           { user: { $ne: null } }   
+//       ]
+//   })
+//       .populate("user")
+//       .populate("likes")
+//       .populate("comments")
+//       .populate("image")
+//       .sort({ createdAt: -1 });
+
+//   // console.log(`userId ${userId}:`, posts);
+//   return posts;
+// };
 
 
 

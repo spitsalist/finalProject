@@ -5,6 +5,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Avatar,
 } from "@mui/material";
 import HomeIcon from "../../assets/home_icon.svg";
 import SearchIcon from "../../assets/search_icon.svg";
@@ -12,7 +13,6 @@ import ExploreIcon from "../../assets/explore_icon.svg";
 import ChatIcon from "../../assets/Messenger_icon.svg";
 import NotificationsIcon from "../../assets/like_icon.svg";
 import AddBoxIcon from "../../assets/create_icon.svg";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import logo from '../../assets/ICHGRA.svg';
 import { DropMenu } from "../DropMenu/DropMenu";
@@ -22,11 +22,9 @@ import { Button } from "@mui/material";
 import { useNotifications } from "../Notification/NotificationContext";
 import { ChatSlideMenu } from "../Chat/ChatSlideMenu";
 
-const MenuIcon = ({ Icon, size = '30px',  }) => (
-  <Icon sx={{ fontSize: size, }} />
-);
 
-export const SideMenu = () => {
+export const SideMenu = ({profileImage}) => {
+  // console.log(profileImage);
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
   const handleChatOpen = () => setIsChatMenuOpen((prev) => !prev)
   const handleChatClose = () => setIsChatMenuOpen(false);
@@ -117,7 +115,7 @@ export const SideMenu = () => {
           </ListItem>
         ))}
 
-        <ListItem
+        <ListItem 
           button
           key="Profile"
           onClick={() => navigate("/profile")}
@@ -128,9 +126,10 @@ export const SideMenu = () => {
             padding: '10px',
             cursor:'pointer'
           }}
+
         >
-          <ListItemIcon sx={{ minWidth: '40px' }}>
-            <MenuIcon Icon={AccountCircleIcon} />
+          <ListItemIcon sx={{ minWidth: '45px' }}>
+            <Avatar src={profileImage} />
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>

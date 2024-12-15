@@ -34,7 +34,6 @@ Currently, two official plugins are available:
 
 
 ### **Chat**
-- **Problem**: The chat feature is not implemented.
 - **Planned Implementation**:
   - Real-time chat using WebSocket.
   - Integration with the user system for private messaging.

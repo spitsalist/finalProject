@@ -5,9 +5,9 @@ import { upload } from "../utils/multer";
 
 export const userRouter = Router()
 
+userRouter.get('/all',middlewareAuth, getAllUsers)
 
-userRouter.get('/',middlewareAuth, getUserProfile)
+userRouter.get('/:id?',middlewareAuth, getUserProfile)
 userRouter.put('/edit', middlewareAuth, upload.single('profileImage'), updateUserProfile)
 
-userRouter.get('/all', getAllUsers)
 

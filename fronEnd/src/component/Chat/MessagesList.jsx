@@ -9,7 +9,7 @@ export const MessagesList = ({
   newMessage,
   setNewMessage,
   handleSendMessage,
-  users
+  user
 }) => {
 
   const getUserInfo = (userId) => {
@@ -73,8 +73,7 @@ export const MessagesList = ({
               }}
                           
               onClick={() => {
-                  window.location.href = `/profile/:userId`;
-                
+                  window.location.href = `/profile/${selectedUserInfo._id}`;
               }}
             >
               View Profile

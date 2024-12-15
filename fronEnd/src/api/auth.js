@@ -65,16 +65,18 @@ export const searchUsers = async (query) => {
   }
 };
 
-export const fetchPosts = async () => {
+export const fetchPosts = async (userId) => {
   try {
     const token = localStorage.getItem("token");
+    const params = userId ? {userId} : {allPosts: true}
     const response = await axios.get(`${BASE_URL}/post`, {
       headers: { Authorization: `Bearer ${token}` },
+      params,
     });
     return response.data;
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return [];
+    return { data: { posts: [] } };
   }
 };
 
@@ -87,7 +89,7 @@ export const getTimePost = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return [];
+    return {data: {posts: []}};
   }
 };
 
@@ -163,12 +165,16 @@ export const unfollowUser = async (userToUnfollowId) => {
   }
 };
 
-export const fetchProfile = async () => {
+export const fetchProfile = async (userId) => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${BASE_URL}/user`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const endpoint = userId ? `${BASE_URL}/user/${userId}` : `${BASE_URL}/user`;
+
+    const response = await axios.get(endpoint, {
+
+    headers: { Authorization: `Bearer ${token}` },
+  });
+    console.log(response.data)
     return response.data.data;
   } catch (error) {
     console.error("Error fetching profile:", error);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchProfile, getTimePost } from '../api/auth'
+import { fetchProfile, fetchPosts } from '../api/auth'
 import { PostMedia } from './pages/HomePage/PostMedia';
 import { Box, Typography, Avatar, Button, Grid } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { FollowButton } from './Buttons/FollowButton/FollowButton'
 
 export const UserProfile = () => {
   const { userId } = useParams(); 
+  // console.log(userId)
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,13 +15,16 @@ export const UserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // setPosts([]);
     const loadUserProfileAndPosts = async () => {
       try {
         setLoading(true)
         const profileData = await fetchProfile(userId)
         setProfile(profileData);
 
-        const postsData = await getTimePost(userId)
+        const postsData = await fetchPosts(userId)
+        console.log(`Fetched posts for userId ${userId}:`, postsData);
+
         setPosts(postsData.data.posts || []);
       } catch (err) {
         console.error("Error loading profile or posts:", err);

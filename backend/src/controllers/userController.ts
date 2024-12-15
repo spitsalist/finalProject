@@ -4,7 +4,7 @@ import { handleFileUpload } from '../services/fileService';
 
 export const getUserProfile = async (req:any, res:any) => {
   try {
-    const userId = req.user.id;
+    const userId = req.params.id || req.user.id    
     const user = await User.findById(userId).select('-password');
 
     if (!user) return sendError(res, 'User not found', 404);
@@ -66,8 +66,12 @@ export const updateUserProfile = async (req: any, res: any) => {
 export const getAllUsers = async (_req: any, res: any) => {
   try {
     const users = await User.find().select("username fullName profileImage");
+    // console.log(users)
     return sendSuccess(res, { users })
   } catch (error: any) {
     return sendError(res, "Error fetching users", 500, error);
   }
 };
+
+
+

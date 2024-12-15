@@ -26,7 +26,7 @@ const Comment = ({
       <Box key={comment._id} sx={{ mb: 2 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            <UserAvatar profileImage={comment.user.profileImage} size="24px" />
+            <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
             {comment.user?.username || "Unknown User"}
           </Typography>
           <Button size="small" onClick={() => onLike(comment._id)}>
@@ -191,7 +191,7 @@ export const PostModal = ({
               gap: "10px",
             }}
           >
-            <UserAvatar profileImage={user.profileImage} altText={user.username} />
+            <UserAvatar profileImage={user?.profileImage} altText={user?.username} />
             <Typography variant="h6">
               <strong>{user?.username}</strong>
             </Typography>

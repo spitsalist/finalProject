@@ -41,19 +41,41 @@ export const addPost = async (req: any, res: Response) => {
     }
   };
 
+  export const fetchPosts = async (req: any, res: any) => {
+    try {
+      const { userId, allPosts } = req.query;
+  
+      let posts;
+  
+      if (allPosts === "true") {
+        posts = await Post.find()
+          .populate("user")
+          .populate("likes")
+          .populate("comments")
+          .populate("image")
+          .sort({ createdAt: -1 });
+
+          // console.log("Total posts", posts.length); 
 
 
-export const fetchPosts = async (req:any, res: Response) => {
-    try{
-        const {userId} = req.query
-        const posts = await getAllPosts(res, userId)
-        if(!posts) return
-    
-        return sendSuccess(res, {posts}, 'Posts fetched successfully', 200)
-    }catch(error){
-        sendError(res, 'Error fetching posts', 500, error)
+      } else if (userId) {
+        posts = await getAllPosts(res, userId, true);
+        if(!posts.length){
+          return sendSuccess(res, {posts: []}, 'this user have no posts', 200)
+        }
+      } else {
+        posts = await getAllPosts(res, req.user.id, false)
+      }
+  
+      if (!posts || posts.length === 0) {
+        return sendSuccess(res, {posts: []}, 'no post aviable', 404);
+      }
+  
+      return sendSuccess(res, { posts }, "Posts fetched successfully");
+    } catch (error) {
+      sendError(res, "Error fetching posts", 500, error);
     }
-}
+  };
 
 
 export const updatePost = async(req: any, res:Response) =>{

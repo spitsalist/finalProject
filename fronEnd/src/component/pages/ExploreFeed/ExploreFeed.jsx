@@ -23,6 +23,8 @@ export const ExploreFeed = () => {
     const loadPosts = async () => {
       try {
         const response = await fetchPosts();
+        console.log("Posts received in ExploreFeed:", response.data.posts.length); // Проверяем количество постов
+
         setPosts(response.data.posts || []);
         setLoading(false);
       } catch (error) {
@@ -55,19 +57,22 @@ export const ExploreFeed = () => {
             justifyContent: 'center',
           }}
         >
-          {posts.slice(0, imageStyles.length).map((post, index) => (
+         {posts.filter(post => post.user).map((post, index) => {
+          const style = imageStyles[index % imageStyles.length]; 
+          return (
             <Box
               key={index}
               component="img"
               src={`data:image/png;base64, ${post.image}`}
               alt={`Post image ${index + 1}`}
               sx={{
-                ...imageStyles[index],
+                ...style,
                 objectFit: 'cover',
                 borderRadius: '5px',
               }}
             />
-          ))}
+          );
+        })}
         </Box>
       )}
     </Box>
