@@ -93,7 +93,7 @@ export const PostContent = ({
         isLiked={isLiked}
         postImage={postImage}
         commentsCount={commentsCount}
-        initialFollowing={isFollowing ? 'true' : 'false'}
+        initialFollowing={user.isFollowing }
         currentUserId='userA'
       />
     </>

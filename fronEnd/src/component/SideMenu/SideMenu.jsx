@@ -24,7 +24,7 @@ import { ChatSlideMenu } from "../Chat/ChatSlideMenu";
 
 
 export const SideMenu = ({profileImage}) => {
-  // console.log(profileImage);
+  // console.log('Profile image in SideMenu:', profileImage);
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
   const handleChatOpen = () => setIsChatMenuOpen((prev) => !prev)
   const handleChatClose = () => setIsChatMenuOpen(false);
@@ -129,7 +129,7 @@ export const SideMenu = ({profileImage}) => {
 
         >
           <ListItemIcon sx={{ minWidth: '45px' }}>
-            <Avatar src={profileImage} />
+            <Avatar src={profileImage} alt="profile"/>
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>

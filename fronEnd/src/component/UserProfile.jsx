@@ -57,7 +57,7 @@ export const UserProfile = () => {
         }}
       >
         <Avatar
-          src={profile.profileImage || "/default-avatar.png"}
+          src={profile.profileImage}
           alt={profile.username}
           sx={{
             width: 100,

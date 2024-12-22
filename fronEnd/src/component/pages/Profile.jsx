@@ -3,6 +3,8 @@ import { fetchProfile, getTimePost } from "../../api/auth";
 import { PostMedia } from "./HomePage/PostMedia";
 import { Box, Typography, Avatar, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { SideMenu } from '../SideMenu/SideMenu';
+// import { PostHeader } from "./HomePage/HomePage";
 
 export const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -40,6 +42,9 @@ export const Profile = () => {
 
   return (
     <Box sx={{ maxWidth: "935px", margin: "auto", padding: "20px", marginBottom:'120px' }}>
+     <SideMenu profileImage={profile.profileImage} />
+     {/* <PostHeader profileImage={profile.profileImage} /> */}
+
       <Box
         sx={{
           display: "flex",
@@ -50,7 +55,7 @@ export const Profile = () => {
         }}
       >
         <Avatar
-          src={profile.profileImage || "/default-avatar.png"}
+          src={profile.profileImage }
           alt={profile.username}
           sx={{
             width: 100,

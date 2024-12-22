@@ -9,29 +9,27 @@ import { getTimePost } from '../../../api/auth';
 import { PostLoader } from './PostLoader';
 import { FollowButton } from '../../Buttons/FollowButton/FollowButton';
 import { PostCard } from './PostCard';
-import { SideMenu } from '../../SideMenu/SideMenu';
 
-export const PostHeader = ({ user, currentUserId }) => {
+export const PostHeader = ({ user, currentUserId }) => {  
 // console.log(user)
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px', justifyContent: 'space-between' }}>
-      <SideMenu profileImage={user.profileImage} />
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar 
-          src={user.profileImage || ''} 
-          alt={user.username || ''} 
+          src={user?.profileImage} 
+          alt={user?.username} 
           sx={{ marginRight: '10px' }} 
         />
         <Box>
           <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-            {user?.username || ''}
+            {user?.username}
           </Typography>
         </Box>
       </Box>
       <FollowButton 
-        userId={user?._id} 
-        initialFollowing={user?.isFollowing} 
-        username={user?.username} 
+        userId={user._id} 
+        initialFollowing={user.isFollowing } 
+        username={user.username} 
         currentUserId={currentUserId}
       />
     </Box>
@@ -70,6 +68,8 @@ export const HomePage = () => {
         <Grid container spacing={2}  >
           {posts.map((post) => (
             <Grid item xs={8} md={6} lg={6}key={post._id}>
+            {/* <PostHeader user={post.user} /> */}
+
               <PostCard post={post} />
             </Grid>
           ))}

@@ -9,18 +9,13 @@ export const checkPostOwnership =async (res:Response, postId:string, userId:stri
 
 
     if(!post){
-        // console.log("Post not found in database for ID:", postId);
-
         return sendError(res, "Post not found", 404)
     }
 
 
     if(forLike && post.user.toString() === userId){
-        // console.log("User cannot like their own post:", userId);
-
         return sendError(res,'You can not like your own post',403 )
     }
-    // console.log("Post ownership confirmed for post:", postId);
 
     return post
 }
@@ -44,11 +39,16 @@ export const getAllPosts = async (_res: any, userId: string, forProfile: boolean
     : { user: { $ne: userId } }
 
   const posts = await Post.find(query)
-    .populate("user")
+    // .populate("user")
+    .populate({
+      path: 'user',
+      select: 'username profileImage followers'
+  })
     .populate("likes")
     .populate("comments")
     .populate("image")
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: -1 })
+    .lean()
 
     if(forProfile && (!posts || posts.length === 0)){
       return[]
@@ -56,26 +56,6 @@ export const getAllPosts = async (_res: any, userId: string, forProfile: boolean
 
   return posts;
 };
-
-// export const getAllPosts = async (_res: any, userId: string) => {
-//   // console.log(" userId:", userId);
-
-//   const posts = await Post.find({
-//       $and: [
-//           { user: { $ne: userId } }, 
-//           { user: { $ne: null } }   
-//       ]
-//   })
-//       .populate("user")
-//       .populate("likes")
-//       .populate("comments")
-//       .populate("image")
-//       .sort({ createdAt: -1 });
-
-//   // console.log(`userId ${userId}:`, posts);
-//   return posts;
-// };
-
 
 
 export const createPost =async(userId:string,image:any,caption:string,_res:Response)=>{

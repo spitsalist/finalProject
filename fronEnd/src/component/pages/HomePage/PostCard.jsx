@@ -35,8 +35,6 @@ export const PostCard = ({ post }) => {
     return <Typography>Loading...</Typography>;
   }
 
-
-
   return ( 
     <Grid item>
       <Card sx={{ borderRadius: '10px', overflow: 'hidden', boxShadow: 'none' }}>

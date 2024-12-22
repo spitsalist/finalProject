@@ -1,6 +1,6 @@
 import { Response } from "express"
 import { sendError, sendSuccess } from '../utils/helpers/responseHelper'
-import { checkPostOwnership, createPost, getAllPosts } from "../services/postService"
+import { checkPostOwnership, getAllPosts } from "../services/postService"
 import { handleFileUpload } from "../services/fileService"
 import { Post } from "../models/Post"
 import { User } from "../models/User"

@@ -37,7 +37,6 @@ export const CreatePostModal = ({ isOpen, onClose }) => {
     try {
 
       await createPost(caption, image)
-      // console.log('Server Response:', response);
       setCaption('');
       setImage(null);
       onClose();
@@ -105,35 +104,35 @@ export const CreatePostModal = ({ isOpen, onClose }) => {
             onClick={() => document.getElementById('file-input').click()}
           >
           {!image ? (
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-    }}
-  >
-    <img
-      src={loadImage}
-      alt="Loading placeholder"
-      style={{
-        maxWidth: '100%',
-        maxHeight: '100%',
-        objectFit: 'contain',
-      }}
-    />
-  </Box>
-) : (
-  <img
-    src={URL.createObjectURL(image)}
-    alt="preview"
-    style={{
-      maxWidth: '200px',
-      maxHeight: '200px',
-      objectFit: 'cover',
-    }}
-  />
-)}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <img
+              src={loadImage}
+              alt="Loading placeholder"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
+        ) : (
+          <img
+            src={URL.createObjectURL(image)}
+            alt="preview"
+            style={{
+              maxWidth: '200px',
+              maxHeight: '200px',
+              objectFit: 'cover',
+            }}
+          />
+        )}
             <input
               type="file"
               id="file-input"

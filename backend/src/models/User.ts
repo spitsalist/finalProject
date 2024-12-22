@@ -16,6 +16,8 @@ interface IUser extends Document {
     resetPasswordExpires: Date
     isPrivate: boolean
     webSite: string
+    _id: string
+    isFollowing?: boolean
 
     comparePassword: (password: string) => Promise<boolean>
 }

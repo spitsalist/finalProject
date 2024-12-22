@@ -26,7 +26,7 @@ export const EditProfile = () => {
             bio: profileData.bio || "",
             webSite: profileData.webSite || "",
           });
-          setPreviewImage(profileData.profileImage || "/default-avatar.png");
+          setPreviewImage(profileData.profileImage);
         } catch (err) {
           setError("Failed to load profile.");
         }
@@ -110,7 +110,7 @@ export const EditProfile = () => {
                 sx={{ width: 70, height: 70, border: "1px solid #ddd" }}
               />
               <Box>
-                <Typography variant="h6">{formData.username || "username"}</Typography>
+                <Typography variant="h6">{formData.username}</Typography>
               </Box>
             </Box>
   

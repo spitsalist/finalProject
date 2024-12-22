@@ -16,7 +16,7 @@ io.on("connection", async (socket) => {
 
   socket.on("getCurrentUser", (_data, callback) => {
     if (socket.data.userId) {
-      callback({ success: true, userId: socket.data.userId, profileImage: socket.data.profileImage || "/default-avatar.png", lastLogin: socket.data.lastLogin });
+      callback({ success: true, userId: socket.data.userId, profileImage: socket.data.profileImage, lastLogin: socket.data.lastLogin });
     } else {
       callback({ success: false, error: "User ID not available." });
     }

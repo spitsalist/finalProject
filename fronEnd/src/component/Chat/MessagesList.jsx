@@ -16,13 +16,13 @@ export const MessagesList = ({
     if (userId === currentUserId) {
       return {
         name: "You",
-        avatar: selectedUserInfo?.profileImage || "/default-avatar.png",
+        avatar: selectedUserInfo?.profileImage
       };
     }
     
     return {
       name: selectedUserInfo?.username,
-      avatar: selectedUserInfo?.profileImage || "/default-avatar.png",
+      avatar: selectedUserInfo?.profileImage
     };
   };
 

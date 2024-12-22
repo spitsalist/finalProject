@@ -6,7 +6,7 @@ import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
 
 const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
   <img
-    src={profileImage || "default-avatar.png"}
+    src={profileImage}
     alt={altText}
     style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px" }}
   />
@@ -27,7 +27,7 @@ const Comment = ({
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Typography variant="body2" sx={{ fontWeight: "bold" }}>
             <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
-            {comment.user?.username || "Unknown User"}
+            {comment.user?.username}
           </Typography>
           <Button size="small" onClick={() => onLike(comment._id)}>
             ❤️ {comment.likesCount || 0}
@@ -198,7 +198,7 @@ export const PostModal = ({
             <FollowButton
             userId={user._id} 
             username={user.username} 
-            initialFollowing={initialFollowing ? 'true' : 'false'} 
+            initialFollowing={initialFollowing}
             />
           </Box>
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>

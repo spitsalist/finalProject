@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { followUser, unfollowUser } from '../../../api/auth';
 import { Button } from '@mui/material';
 import { useNotifications } from '../../Notification/NotificationContext';
 
 export const FollowButton = ({ userId, username, initialFollowing }) => {
-  const [following, setFollowing] = useState(initialFollowing === 'true')
+  const [following, setFollowing] = useState(initialFollowing)
   const { createNotification } = useNotifications();
+
+  useEffect(() => {
+    setFollowing(initialFollowing);
+  }, [initialFollowing]);
 
   const handleFollowClick = async () => {
     try {
