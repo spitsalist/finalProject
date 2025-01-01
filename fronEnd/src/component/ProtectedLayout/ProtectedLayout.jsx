@@ -8,9 +8,13 @@ import { Profile } from "../pages/Profile";
 import { EditProfile } from "../pages/EditProfile";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { UserProfile } from "../UserProfile";
+// import { useNotifications } from "../Notification/NotificationContext";
 // import { Chat } from "../Chat/Chat";
 function ProtectedLayout() {
   const location = useLocation();
+  // const {notifications} = useNotifications()
+  // console.log("Notifications in ProtectedLayout:", notifications);
+
 
   const routesWithSideMenu = ["/home", "/explore", "/profile", "/edit-profile"];
   const isSideMenuVisible = routesWithSideMenu.some((path) =>

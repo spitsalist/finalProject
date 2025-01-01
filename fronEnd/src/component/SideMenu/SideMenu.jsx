@@ -24,7 +24,7 @@ import { ChatSlideMenu } from "../Chat/ChatSlideMenu";
 
 
 export const SideMenu = ({profileImage}) => {
-  // console.log('Profile image in SideMenu:', profileImage);
+  // console.log(profileImage);
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
   const handleChatOpen = () => setIsChatMenuOpen((prev) => !prev)
   const handleChatClose = () => setIsChatMenuOpen(false);

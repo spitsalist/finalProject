@@ -6,7 +6,8 @@ import { fetchProfile } from "../../../api/auth";
 import { useState, useEffect, useMemo } from "react";
 
 export const PostCard = ({ post }) => {
-  const token = localStorage.getItem('token'); 
+  console.log('post', post)
+  // const token = localStorage.getItem('token'); 
   const [currentId, setCurrentId] = useState(''); 
 
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,8 @@ export const PostCard = ({ post }) => {
     const fetchCurrentProfile = async () => {
       try {
         const profileData = await fetchProfile();
-        setCurrentId(profileData._id);
+        // console.log("Profile Data:", profileData)
+        setCurrentId(profileData.username);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -26,10 +28,13 @@ export const PostCard = ({ post }) => {
     fetchCurrentProfile();
   }, []);
 
+
   const isLiked = useMemo(() => {
-    if (!currentId) return false;
-    return post.likes.some(likeUserId => likeUserId.toString() === currentId);
-  }, [post.likes, currentId]);
+    if (loading || !currentId || !post.likes) return false;
+    return post.likes.some(
+      (likeUser) => likeUser.username === currentId 
+    );
+  }, [post.likes, currentId, loading]);
 
   if (loading) {
     return <Typography>Loading...</Typography>;

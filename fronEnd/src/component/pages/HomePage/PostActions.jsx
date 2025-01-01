@@ -3,35 +3,32 @@ import { IconButton, Box } from "@mui/material";
 import { Favorite, FavoriteBorder } from '@mui/icons-material';
 import { likePost, unlikePost } from "../../../api/auth";
 
-export const PostActions = ({ postId, initialLikesCount, initialLiked, onLikeToggle }) => {
-  const [likesCount, setLikesCount] = useState(initialLikesCount || 0);
-  // console.log(initialLiked)
-  const [isLiked, setIsLiked] = useState(initialLiked || false);
+export const PostActions = ({ postId, initialLiked = false, onLikeToggle }) => {
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleLikeToggle = async () => {
+    if (isUpdating || !postId) return;
 
+    setIsUpdating(true);
     try {
-      if (isLiked) {
-        await unlikePost(postId);
-        setLikesCount((prev) => prev - 1);
-      } else {
-        await likePost(postId);
-        setLikesCount((prev) => prev + 1);
-      }
-      setIsLiked(!isLiked);
-      onLikeToggle({ isLiked: !isLiked, likesCount });
+      const response = await (isLiked ? unlikePost(postId) : likePost(postId));
+      const newState = response.data;
+
+      setIsLiked(newState.isLiked);
+      onLikeToggle?.(newState);
     } catch (error) {
       console.error("Error toggling like:", error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 0 }}>
-      <IconButton onClick={handleLikeToggle} disabled={!postId}>
+      <IconButton onClick={handleLikeToggle} disabled={!postId || isUpdating}>
         {isLiked ? <Favorite color="error" /> : <FavoriteBorder />}
       </IconButton>
- 
     </Box>
   );
 };
-

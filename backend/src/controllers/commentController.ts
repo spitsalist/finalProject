@@ -5,7 +5,6 @@ import { sendError, sendSuccess } from "../utils/helpers/responseHelper"
 import { commentNotification, createLikeNotification, replyNotification } from "../services/notificationService/notificationService"
 import { checkPostOwnership } from "../services/postService"
 
-
 export const commentOnPost = async (req: any, res: Response) => {
     try {
         // console.log('req.user:', req.user);
@@ -54,9 +53,7 @@ export const commentOnPost = async (req: any, res: Response) => {
       }
   
       return sendSuccess(res, { comment }, 'Comment created successfully', 200);
-    } catch (error: any) {
-    //   console.error("Error creating comment:", error);
-  
+    } catch (error: any) {  
       return sendError(res, 'Error creating comment', 500, error);
     }
   };
@@ -64,6 +61,7 @@ export const commentOnPost = async (req: any, res: Response) => {
   export const getComments = async (req: any, res: Response) => {
     try {
       const { postId } = req.params;
+      const userId = req.user._id
   
       const comments = await Comment.find({ post: postId })
         .populate("user", "username profileImage")
@@ -76,45 +74,72 @@ export const commentOnPost = async (req: any, res: Response) => {
           },
         })
         .sort({ createdAt: 1 });
+
+        const enrichedComments = await Promise.all(
+          comments.map(async(comment)=>{
+            const likeCounter = await Like.countDocuments({comment: comment._id})
+            const isLiked = await Like.exists({comment: comment._id, user:userId})
+            return {
+              ...comment.toObject(),
+              likeCounter,
+              isLiked: !!isLiked,
+            }
+          })
+        )
   
-      sendSuccess(res, { comments }, "Comments fetched successfully");
+      sendSuccess(res, { comments: enrichedComments }, "Comments fetched successfully");
     } catch (error) {
-    //   console.error("Error fetching comments:", error);
       sendError(res, "Failed to fetch comments", 500, error);
     }
   };
 
 
+export const likeComment = async (req: any, res: Response) => {
+  try {
+    const { commentId } = req.body;
+    const userId = req.user.id;
+    const username = req.user.username;
 
-export const likeComment = async(req:any, res:Response) => {
-    try{
-        const {commentId} = req.body
-        const userId = req.user.id
-        // console.log('userId:', userId);
 
-        const username = req.user.username
-        // console.log('username:', username);
-
-        const comment = await Comment.findById(commentId)
-        if(!comment){
-            return sendError(res,'Comment not found', 404)
-        }
-        const existingLike = await Like.findOne({
-            user: userId,
-            comment: commentId,
-        })
-        if(existingLike){
-            return sendError(res, 'You have already liked this comment', 400)
-        }
-        const like = new Like({
-            user: userId,
-            comment: commentId,
-        })
-        await like.save()
-
-        await createLikeNotification(userId, username, commentId, comment.user.toString())
-        return sendSuccess(res, {},'Comment liked succsefully', 200)
-    }catch(error:any){
-        return sendError(res, 'Error liking comment',500,error)
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return sendError(res, "Comment not found", 404);
     }
-}
+
+    const existingLike = await Like.findOne({ user: userId, comment: commentId });
+    if (existingLike) {
+      await Like.deleteOne({ _id: existingLike._id });
+      const likeCounter = await Like.countDocuments({ comment: commentId });
+      return sendSuccess(
+        res,
+        { likeCounter, isLiked: false },
+        "Comment unliked successfully",
+        200
+      );
+    }
+
+    const like = new Like({
+      user: userId,
+      comment: commentId,
+    });
+    await like.save();
+    const likeCounter = await Like.countDocuments({ comment: commentId })
+    await createLikeNotification(userId, username, commentId, comment.user.toString());
+    console.log("Notification parameters:", {
+      userId,
+      username,
+      commentId,
+      commentUserId: comment.user.toString(),
+  });
+    return sendSuccess(
+      res,
+      { likeCounter, isLiked: true },
+      "Comment liked successfully",
+      200
+    );
+  } catch (error: any) {
+    console.error("Error liking comment:", error);
+    return sendError(res, "Error liking comment", 500, error);
+  }
+};
+

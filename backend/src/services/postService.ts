@@ -2,23 +2,25 @@ import { Response } from "express"
 import { Post } from "../models/Post"
 import { sendError } from "../utils/helpers/responseHelper"
 
+export const checkPostOwnership = async (
+  res: Response,
+  postId: string,
+  userId: string,
+  forLike = false
+) => {
+  const post = await Post.findById(postId);
 
-export const checkPostOwnership =async (res:Response, postId:string, userId:string, forLike = false) => {
+  if (!post) {
+      return sendError(res, "Post not found", 404);
+  }
 
-    const post = await Post.findById(postId)
+  if (forLike && post.user.toString() === userId) {
+      return sendError(res, 'You cannot like your own post', 403);
+  }
 
+  return post;
+};
 
-    if(!post){
-        return sendError(res, "Post not found", 404)
-    }
-
-
-    if(forLike && post.user.toString() === userId){
-        return sendError(res,'You can not like your own post',403 )
-    }
-
-    return post
-}
 // if is subscribed ...
 // export const getAllPosts = async(_res:Response,followingIds?:string[])=>{
 //     const query = followingIds ? {user: {$in: followingIds}} : {}

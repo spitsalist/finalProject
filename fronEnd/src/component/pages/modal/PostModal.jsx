@@ -1,16 +1,3 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Box, Typography, TextField, Button, InputAdornment } from "@mui/material";
-import { fetchComments, addComment, likeComment } from "../../../api/auth";
-import { PostMedia } from "../HomePage/PostMedia";
-import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
-
-const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
-  <img
-    src={profileImage}
-    alt={altText}
-    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px" }}
-  />
-);
 
 const Comment = ({
     comment,
@@ -21,6 +8,7 @@ const Comment = ({
   }) => {
     const isAuthor = comment.user._id === currentUserId; 
     const canReply = !isAuthor || (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
+    
   
     return (
       <Box key={comment._id} sx={{ mb: 2 }}>
@@ -29,8 +17,12 @@ const Comment = ({
             <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
             {comment.user?.username}
           </Typography>
-          <Button size="small" onClick={() => onLike(comment._id)}>
-            ❤️ {comment.likesCount || 0}
+          <Button size="small" onClick={() => onLike(comment._id)}
+             style={{
+              color: comment.isLiked ? "red" : "gray",
+            }}
+            >
+            ❤️ {comment.likeCounter > 0 ? comment.likeCounter : ''}
           </Button>
         </Box>
         <Typography variant="body2">{comment.text}</Typography>
@@ -44,6 +36,27 @@ const Comment = ({
     );
   };
 
+
+
+
+
+import React, { useState, useEffect } from "react";
+import { Modal, Box, Typography, TextField, Button, InputAdornment } from "@mui/material";
+import { useComments } from "../../../hooks/useComments";
+import { PostMedia } from "../HomePage/PostMedia";
+import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
+// import { UserAvatar } from "./UserAvatar";
+// import { Comment } from "./Comment";
+
+
+const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
+  <img
+    src={profileImage}
+    alt={altText}
+    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px" }}
+  />
+);
+
 export const PostModal = ({
   isOpen,
   onClose,
@@ -53,86 +66,40 @@ export const PostModal = ({
   postImage,
   likesCount,
   initialFollowing,
-  currentUserId
+  currentUserId,
 }) => {
-  const [comments, setComments] = useState([]);
+
+//  console.log(postId)
   const [newComment, setNewComment] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const loadComments = async () => {
-    if (!postId) return;
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const commentsData = await fetchComments(postId);
-      if (commentsData.status === "success" && Array.isArray(commentsData.data?.comments)) {
-        setComments(commentsData.data.comments);
-      } else {
-        setComments([]);
-        setError("Failed to load comments.");
-      }
-    } catch {
-      setError("Failed to load comments.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    comments,
+    loading,
+    error,
+    addNewComment,
+    toggleLikeComment,
+  } = useComments(postId, currentUserId);
 
   const handleAddComment = async (parentCommentId = null) => {
-    if (!newComment.trim()) return;
-  
-    try {
-      const response = await addComment(postId, newComment, parentCommentId);
-      if (response.status === "success" && response.data?.comment) {
-        setComments((prev) => [...prev, response.data.comment]);
-        setNewComment("");
-      } else {
-        throw new Error(response.message || "Invalid response structure");
-      }
-    } catch (err) {
-      setError(err.message || "Failed to add comment.");
-    }
+    await addNewComment(newComment, parentCommentId);
+    setNewComment("");
   };
-
-  const handleLikeComment = async (commentId) => {
-    try {
-      await likeComment(commentId);
-      setComments((prev) =>
-        prev.map((comment) =>
-          comment._id === commentId
-            ? { ...comment, likesCount: (comment.likesCount || 0) + 1 }
-            : comment
-        )
-      );
-    } catch (err) {
-      console.error("Failed to like comment:", err);
-    }
-  };
-
-  const getReplies = (parentId) =>
-    comments.filter((comment) => String(comment.parentComment) === String(parentId));
 
   const renderComments = (parentId = null) => {
-    const filteredComments = getReplies(parentId);
-  
+    const filteredComments = comments.filter(
+      (comment) => String(comment.parentComment) === String(parentId)
+    );
+
     return filteredComments.map((comment) => (
       <Comment
         key={comment._id}
         comment={comment}
-        currentUserId={currentUserId} 
+        currentUserId={currentUserId}
         onReply={(id) => handleAddComment(id)}
-        onLike={handleLikeComment}
+        onLike={toggleLikeComment}
         renderReplies={(id) => renderComments(id)}
       />
     ));
   };
-
-  useEffect(() => {
-    if (isOpen) loadComments();
-  }, [isOpen, postId]);
 
   if (!isOpen) return null;
 
@@ -141,9 +108,7 @@ export const PostModal = ({
       <Box
         sx={{
           display: "flex",
-          width: "70%",
-          maxWidth: "1000px",
-          height: "60vh",
+          width: "800px",
           margin: "0 auto",
           marginTop: "50px",
           bgcolor: "background.paper",
@@ -159,7 +124,6 @@ export const PostModal = ({
             justifyContent: "center",
             alignItems: "center",
             bgcolor: "#f5f5f5",
-            height: "100%",
           }}
         >
           {postImage ? (
@@ -182,7 +146,6 @@ export const PostModal = ({
         >
           <Box
             sx={{
-              flexShrink: 0,
               borderBottom: "1px solid #ddd",
               paddingBottom: "10px",
               marginBottom: "10px",
@@ -196,9 +159,9 @@ export const PostModal = ({
               <strong>{user?.username}</strong>
             </Typography>
             <FollowButton
-            userId={user._id} 
-            username={user.username} 
-            initialFollowing={initialFollowing}
+              userId={user._id}
+              username={user.username}
+              initialFollowing={initialFollowing}
             />
           </Box>
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
@@ -215,9 +178,9 @@ export const PostModal = ({
             )}
           </Box>
 
-          <Box sx={{ flexShrink: 0, paddingTop: "10px" }}>
+          <Box sx={{ paddingTop: "10px" }}>
             <Typography variant="body2" sx={{ marginBottom: "10px" }}>
-              <strong>{likesCount}</strong> {likesCount === 1 ? "like" : "likes"}
+              <strong>{likesCount}</strong> {likesCount ? "like" : "likes"}
             </Typography>
             <TextField
               fullWidth

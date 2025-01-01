@@ -207,11 +207,10 @@ export const likeComment = async (commentId) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error liking comment:", error);
+    console.error("Error liking comment:", error.response?.data || error.message);
     throw error;
   }
 };
-
 
 export const unlikePost = async (postId) => {
   try {
@@ -232,7 +231,6 @@ export const chatSocket = io(`${BASE_URL}`, {
     token: localStorage.getItem("token"),
   },
 });
-
 
 chatSocket.on("newMessage", (message) => {
   // console.log(message); 
@@ -259,7 +257,7 @@ chatSocket.on("connect", () => {
 });
 
 chatSocket.on("updateLastLogin", ({ userId, lastLogin }) => {
-  console.log(`User ${userId} last login updated:`, lastLogin);
+  console.log(`User ${userId} last login`, lastLogin);
 });
 
 export const getLastLogin = (recipientId) =>
@@ -311,27 +309,59 @@ export const markAsRead = (messageId, recipientId) => {
   });
 };
 
-
-export const socket = io(SOCKET_URL, {
+export const socket = io(BASE_URL, {
   withCredentials: true,
   transports: ["websocket", "polling"],
   auth: {
     token: localStorage.getItem("token"),
   },
 });
+socket.on("connect", () => {
+  console.log("Socket connected:", socket.id);
+});
 
+socket.on("connect_error", (err) => {
+  console.error("Socket connection error:", err);
+});
 export const subscribeToNotifications = (callback) => {
-  socket.on("newNotification", callback);
+  console.log("Subscribing to new notifications...");
+  socket.on("newNotification", (notification) => {
+    console.log("New notification received:", notification);
+    callback(notification);
+  });
 };
 
+export const joinUserRoom = (userId) => {
+  console.log(`User ${userId} joined their room.`);
+
+  socket.emit('join', userId)
+}
+
+export const fetchNotifications =(setNotifications) =>{
+  console.log("Fetching notifications...");
+
+  socket.emit('fetchNotifications', (response) => {
+    if(response.success && Array.isArray(response.notifications)){
+      setNotifications(response.notifications)
+      console.log("Notifications fetched and set:", response.notifications);
+
+    }else{
+      console.error('failed to fetch notifications', response.error)
+    }
+  })
+}
+
 export const disconnectSocket = () => {
+  // socket.off('newNotification')
+  console.log("Disconnecting socket...");
+
   socket.disconnect();
 };
 
 export const getNotifications = async () => {
   try {
     const token = localStorage.getItem("token");
-    const response = await axios.get(`${BASE_URL}/notification`, {
+    const response = await axios.get(`${BASE_URL}/notifications`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -344,16 +374,17 @@ export const getNotifications = async () => {
   }
 };
 
-export const markNotificationAsRead = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await axios.put(`${BASE_URL}/notifications/read/`, {}, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error marking notification as read:", error);
-    throw error;
+export const markNotificationAsRead = async (notificationId) => {
+  try{
+  const token = localStorage.getItem("token");
+  const response = await axios.put(`${BASE_URL}/notifications/${notificationId}/read`,{},
+   { headers: { Authorization: `Bearer ${token}` 
+  }
+  }
+  )
+  return response.data;
+  }catch(error){
+    console.error('error fetching notification', error)
   }
 };
 

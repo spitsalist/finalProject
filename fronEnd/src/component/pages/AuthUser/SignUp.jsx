@@ -64,7 +64,7 @@ export const SignUpPage = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
 
-{error && <Typography color="error" align="center">{error}</Typography>}
+                        {error && <Typography color="error" align="center">{error}</Typography>}
 
                         <Typography variant="body2" color="textSecondary" align="center" sx={{ mt: 1, fontSize: '12px' }}>
                             People who use our service may have uploaded your contact information to Instagram. 
@@ -72,14 +72,14 @@ export const SignUpPage = () => {
                         </Typography>
 
                         <Typography variant="body2" color="textSecondary" align="center" sx={{ mt: 1, fontSize: '12px' }}>
-    By signing up, you agree to our 
-    <Link sx={{ mx: 0.5, fontSize: '12px' }}>Terms</Link>, 
-    <Link sx={{ mx: 0.5, fontSize: '12px' }}>Privacy</Link>.
-</Typography>
-<Typography variant="body2" color="textSecondary" align="center" sx={{ fontSize: '12px' }}>
-    <Link sx={{ mx: 0.5, fontSize: '12px' }}>Policy</Link> and
-    <Link sx={{ mx: 0.5, fontSize: '12px' }}>Cookies Policy</Link>.
-</Typography>
+                            By signing up, you agree to our 
+                            <Link sx={{ mx: 0.5, fontSize: '12px' }}>Terms</Link>, 
+                            <Link sx={{ mx: 0.5, fontSize: '12px' }}>Privacy</Link>.
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" align="center" sx={{ fontSize: '12px' }}>
+                            <Link sx={{ mx: 0.5, fontSize: '12px' }}>Policy</Link> and
+                            <Link sx={{ mx: 0.5, fontSize: '12px' }}>Cookies Policy</Link>.
+                        </Typography>
 
                         <Button
                             variant="contained"

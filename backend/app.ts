@@ -14,23 +14,14 @@ import {userRouter} from './src/routes/userRouter'
 export const createApp =()=>{
 const app = express()
 
-// const FRONTEND_URL = 'http://localhost:5173'
-
-// const corsOptions = {
-//   origin: FRONTEND_URL,
-// //   credentials: true,
-
-// app.use(cors(corsOptions))
 app.use(cors())
-// app.use(cors({ origin: "*" }))
-
 app.use(express.json())
 
 app.use('/auth', authRouter)
 app.use('/post', postRouter)
 app.use('/message', postMessage)
 app.use('/follow', followRouter)
-app.use('/notification', notifyRouter)
+app.use('/notifications', notifyRouter)
 app.use('/like', likeRouter)
 app.use('/comment', commentRouter)
 app.use('/search', searchUserRouter)

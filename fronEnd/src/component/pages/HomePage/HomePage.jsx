@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Typography,
-  Grid,
-} from '@mui/material';
-import { getTimePost } from '../../../api/auth';
-import { PostLoader } from './PostLoader';
+// import React, { useEffect, useState } from 'react';
+
+// import { getTimePost } from '../../../api/auth';
+// import { PostLoader } from './PostLoader';
 import { FollowButton } from '../../Buttons/FollowButton/FollowButton';
-import { PostCard } from './PostCard';
+// import { PostCard } from './PostCard';
+
+
 
 export const PostHeader = ({ user, currentUserId }) => {  
 // console.log(user)
@@ -36,40 +33,25 @@ export const PostHeader = ({ user, currentUserId }) => {
   );
 };
 
-export const HomePage = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+import React from "react";
+import { Box, Typography, Grid, Avatar } from "@mui/material";
+import { usePosts } from "../../../context/PostContext"
+import { PostLoader } from "./PostLoader";
+import { PostCard } from "./PostCard";
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const fetchedPosts = await getTimePost();  
-        // console.log(fetchedPosts);
-        setPosts(fetchedPosts.data.posts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadPosts();
-  }, []);
-// console.log(posts)
+export const HomePage = () => {
+  const { posts, loading } = usePosts(); 
+
   return (
-    
-    <Box sx={{   padding:'25px 80px ', marginBottom:'85px', width:'700px'  }}> 
-    {/* position:'absolute', left:'330px', right:'200px', */}
+    <Box sx={{ padding: "25px 80px", marginBottom: "85px", width: "700px" }}>
       {loading ? (
         <PostLoader />
       ) : posts.length === 0 ? (
-
         <Typography>No posts available</Typography>
       ) : (
-        <Grid container spacing={2}  >
+        <Grid container spacing={2}>
           {posts.map((post) => (
-            <Grid item xs={8} md={6} lg={6}key={post._id}>
-            {/* <PostHeader user={post.user} /> */}
-
+            <Grid item xs={8} md={6} lg={6} key={post._id}>
               <PostCard post={post} />
             </Grid>
           ))}

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { CardContent, Divider, Typography, Box, IconButton, Modal } from "@mui/material";
+import { CardContent, Divider, Typography, Box, IconButton } from "@mui/material";
 import { PostActions } from "./PostActions";
-import { useNotifications } from "../../Notification/NotificationContext"; 
 import msgIco from "../../../assets/msg_ico.svg";
 import { PostModal } from "../modal/PostModal";
 
@@ -14,28 +13,16 @@ export const PostContent = ({
   initialLikesCount,
   initialLiked,
 }) => {
-  const { createNotification } = useNotifications(); 
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [isLiked, setIsLiked] = useState(initialLiked)
-  // console.log(initialLiked)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleLikeClick = (newLikeState) => {
     setIsLiked(newLikeState.isLiked);
     setLikesCount(newLikeState.likesCount);
-
-    if (newLikeState.isLiked) {
-      createNotification({
-        content: `${user?.username || ""} liked your post!`,
-        postId,
-        type: "like",
-        postImage, 
-      });
-    }
   };
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = () => setIsModalOpen(false)
-  const isFollowing = true;
 
   const maxLength = 50;
   const isCaptionTruncated = caption && caption.length > maxLength;
@@ -43,9 +30,7 @@ export const PostContent = ({
 
   return (
     <>
-      <CardContent sx={{ padding: 1 }}>
-        {/* <PostMedia image={postImage} onClick={handleOpenModal} /> */}
-        
+      <CardContent sx={{ padding: 1 }}>        
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 0 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <PostActions

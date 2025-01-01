@@ -1,72 +1,81 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { subscribeToNotifications, getNotifications, markNotificationAsRead as apiCreateNotification} from "../../api/auth";
+import {
+  subscribeToNotifications,
+  getNotifications,
+  markNotificationAsRead,
+} from "../../api/auth";
 
-export const NotificationContext = createContext(); 
+export const NotificationContext = createContext(null);
 
-export const NotificationProvider = ({ children }) => {
+ const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
 
   useEffect(() => {
     const fetchNotifications = async () => {
-      try{
-        const response = await getNotifications();
-        if (response.status === 'success') {
-          setNotifications(response.data.notification)
+      try {
+        const response = await getNotifications(); 
+        if (response.status === "success") {
+          setNotifications(response.data.notifications); 
+          setUnreadCount(response.data.notifications.filter((notif) =>
+          !notif.isRead).length)
         } else {
-          console.error(response.message || 'error fetching notifications');
+          console.error("Failed to fetch notifications:", response.message);
         }
-      }catch(error){
-        console.error('error get notification', error)
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
       }
-    }
-    fetchNotifications()
-
+    };
+  
+    fetchNotifications();
+  
     const unsubscribe = subscribeToNotifications((notification) => {
-      setNotifications((prev) => [notification, ...prev]);
+      setNotifications((prev) => {
+        const exists = prev.some((notif) => notif._id === notification._id);
+        if (!exists) {
+          setUnreadCount((prevCount) => prevCount + 1)
+          return [notification, ...prev]; 
+        }
+        return prev; 
+      });
     });
-
+  
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, []);
 
-  const markAsRead = async(id) => {
-    try{
-      await markNotificationAsRead(id)
 
-      setNotifications((prev) =>
-        prev.map((notif) => (notif.id === id ? { ...notif, isRead: true } : notif))
-      );
-    }catch(error){
-      console.error('error notification as read:', error);
-
-    }
-  };
-
-  const createNotification =async ({content, postId, type, postImage}) => {
-    try{
-      const response = await apiCreateNotification({content, postId, type,postImage})
-      if(response.status === 'success'){
-        setNotifications((prev) => [response.data.notification, ...prev])
-      }else{
-        console.error('error create notification:', response.message)
+  const markAsRead = async (notificationId) => {
+    try {
+      const response = await markNotificationAsRead(notificationId);
+      if (response.success) {
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif._id === notificationId? { ...notif, isRead: true  } : notif
+          )
+        );
+        setUnreadCount((prevCount) => prevCount -1)
       }
-    }catch(error){
-      console.error('error creating notification', error)
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
     }
   };
 
   return (
-    <NotificationContext.Provider value={{ notifications, markAsRead, createNotification }}>
+    <NotificationContext.Provider value={{ notifications, setNotifications, markAsRead,unreadCount, setUnreadCount }}>
       {children}
     </NotificationContext.Provider>
   );
 };
 
-export const useNotifications = () => {
+ const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {
     throw new Error("useNotifications must be used within a NotificationProvider");
   }
   return context;
 };
+
+export  {NotificationProvider, useNotifications}

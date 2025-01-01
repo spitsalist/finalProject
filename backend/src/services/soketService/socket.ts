@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Message } from "../../models/Message"; 
 import { User } from "../../models/User"; 
+import { Notification } from "../../models/Notification";
 
 export const io = new Server({
   cors: {
@@ -29,7 +30,7 @@ io.on("connection", async (socket) => {
     return;
   }
 
-  let userId;
+  let userId //: { toString: () => string | string[]; };
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
     userId = decoded.id;
@@ -41,14 +42,31 @@ io.on("connection", async (socket) => {
       return;
     }
 
-
     socket.data.userId = userId;
     socket.data.profileImage = user.profileImage;
-
     socket.join(userId.toString())
 
-    // console.log(userId);
+    socket.on('fetchNotifications', async(callback) => {
+      console.log("Fetching notifications for user:", socket.data.userId);
 
+      try{
+        const notifications = await Notification.find({user: socket.data.userId})
+        .sort({createdAt: -1})
+        .populate('relatedUser', 'username profileImage')
+        .populate('relatedPost', 'postImage')
+        console.log("Fetched notifications:", notifications);
+        callback({success: true, notifications})
+      }catch(error:any){
+        console.error('error fetching notifications', error)
+      }
+    })    
+
+    }catch(error:any){
+      console.error('invalid token', error)
+      socket.disconnect()
+      return
+    }
+  
       socket.on("chatOpened", async ({ chatUserId }) => {
         try {
             // console.log(chatUserId);
@@ -68,13 +86,7 @@ io.on("connection", async (socket) => {
         }
       });
 
-  } catch (error) {
-    console.error("Invalid token:", error);
-    socket.disconnect();
-    return;
-  }
-
-  socket.on("sendMessage", async ({ recipientId, message }, callback) => {
+    socket.on("sendMessage", async ({ recipientId, message }, callback) => {
     if (recipientId === userId) {
       return callback({ success: false, error: "Cannot send messages to yourself" });
     }
@@ -104,7 +116,6 @@ io.on("connection", async (socket) => {
     }
   });
 
-
   socket.on("markAsRead", async ({ messageId, recipientId }, callback) => {
     console.log("markAsRead received:", { messageId, recipientId });
 
@@ -122,8 +133,8 @@ io.on("connection", async (socket) => {
   
     const messageIdString = message._id.toString();
 
-    io.to(message.sender.toString()).emit("messageRead", { messageId: messageIdString });
-io.to(message.recipient.toString()).emit("messageRead", { messageId: messageIdString });
+  io.to(message.sender.toString()).emit("messageRead", { messageId: messageIdString });
+  io.to(message.recipient.toString()).emit("messageRead", { messageId: messageIdString });
       callback({ success: true });
     } catch (error) {
       console.error("Error marking message as read:", error);
@@ -139,8 +150,6 @@ io.to(message.recipient.toString()).emit("messageRead", { messageId: messageIdSt
           { sender: recipientId, recipient: userId },
         ],
       }).sort({ createdAt: 1 })
-
-
 
       callback({ success: true, messages });
     } catch (error) {

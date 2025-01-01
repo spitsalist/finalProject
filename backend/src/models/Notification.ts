@@ -15,7 +15,7 @@ const notificationSchema: Schema<INotification> = new Schema({
     type: {type: String, required: true},
     content:{type: String, required: true},
     isRead:{type: Boolean, default: false},
-    relatedUser:{type: mongoose.Schema.Types.ObjectId, ref:'User'},
+    relatedUser:{type: mongoose.Schema.Types.ObjectId, ref:'User', required:true},
     relatedPost:{type: mongoose.Schema.Types.ObjectId, ref: 'Post'},
     relatedComment:{type: mongoose.Schema.Types.ObjectId, ref:'Comment'},
 }, {timestamps: true})
