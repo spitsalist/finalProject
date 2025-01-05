@@ -9,16 +9,18 @@ export const getNotifications = async (req: any, res: Response): Promise<void> =
             .sort({ createdAt: -1 })
             .limit(20)
 
-        //     .populate({
-        //         path: "relatedUser",
-        //         select: "username profileImage",
-        //     })
-        //     .populate({
-        //     path: "relatedPost",
-        //         select: "postImage",
-        //    });
-            .populate("relatedUser", "username profileImage")
-            .populate("relatedPost", "postImage")
+            .populate({
+                path: "relatedPost",
+                    select: "image user",
+                    populate:{path: 'user', select: 'username profiImage'},
+               })
+            .populate({
+                path: "relatedUser",
+                select: "username profileImage",
+            })
+
+            // .populate("relatedUser", "username profileImage")
+            // .populate("relatedPost", "postImage")
 
         sendSuccess(res, {success: true, notifications });
     } catch (error: any) {
@@ -45,7 +47,7 @@ export const markNotificationAsRead = async (req:any, res:any) => {
     //     }
     // })
     .populate('relatedUser', 'username profileImage')
-    .populate('relatedPost', 'postImage')
+    .populate('relatedPost', 'image')
     if(!updateNotification){
         console.error("Notification not found");
 

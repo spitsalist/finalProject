@@ -1,52 +1,51 @@
-
-const Comment = ({
-    comment,
-    currentUserId, 
-    onReply,
-    onLike,
-    renderReplies,
-  }) => {
-    const isAuthor = comment.user._id === currentUserId; 
-    const canReply = !isAuthor || (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
-    
-  
-    return (
-      <Box key={comment._id} sx={{ mb: 2 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
-            {comment.user?.username}
-          </Typography>
-          <Button size="small" onClick={() => onLike(comment._id)}
-             style={{
-              color: comment.isLiked ? "red" : "gray",
-            }}
-            >
-            ❤️ {comment.likeCounter > 0 ? comment.likeCounter : ''}
-          </Button>
-        </Box>
-        <Typography variant="body2">{comment.text}</Typography>
-        {canReply && (
-          <Button size="small" onClick={() => onReply(comment._id)} sx={{ mt: 1 }}>
-            Reply
-          </Button>
-        )}
-        {renderReplies(comment._id)}
-      </Box>
-    );
-  };
-
-
-
-
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Box, Typography, TextField, Button, InputAdornment } from "@mui/material";
 import { useComments } from "../../../hooks/useComments";
 import { PostMedia } from "../HomePage/PostMedia";
 import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
 // import { UserAvatar } from "./UserAvatar";
 // import { Comment } from "./Comment";
+
+
+
+
+
+const Comment = ({
+  comment,
+  currentUserId, 
+  onReply,
+  onLike,
+  renderReplies,
+}) => {
+  const isAuthor = comment.user._id === currentUserId; 
+  const canReply = !isAuthor || (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
+  
+
+  return (
+    <Box key={comment._id} sx={{ mb: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+          <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
+          {comment.user?.username}
+        </Typography>
+        <Button size="small" onClick={() => onLike(comment._id)}
+           style={{
+            color: comment.isLiked ? "red" : "gray",
+          }}
+          >
+          ❤️ {comment.likeCounter > 0 ? comment.likeCounter : ''}
+        </Button>
+      </Box>
+      <Typography variant="body2">{comment.text}</Typography>
+      {canReply && (
+        <Button size="small" onClick={() => onReply(comment._id)} sx={{ mt: 1 }}>
+          Reply
+        </Button>
+      )}
+      {renderReplies(comment._id)}
+    </Box>
+  );
+};
 
 
 const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (

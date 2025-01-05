@@ -1,31 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { followUser, unfollowUser } from '../../../api/auth';
-import { Button } from '@mui/material';
+import React from "react";
+import { Button, CircularProgress } from "@mui/material";
+import { useFollow } from "../../../context/FollowContext";
 
 export const FollowButton = ({ userId, username, initialFollowing }) => {
-  const [following, setFollowing] = useState(initialFollowing)
+  const { followingState, toggleFollow, loadingState } = useFollow();
+  const isFollowing = followingState[userId] ?? initialFollowing ?? false;
+  const isLoading = loadingState[userId] ?? false;
 
-  
-  useEffect(() => {
-    setFollowing(initialFollowing);
-  }, [initialFollowing]);
-
-  const handleFollowClick = async () => {
-    try {
-      if (following) {
-        await unfollowUser(userId); 
-      } else {
-        await followUser(userId, username);
-      }
-      setFollowing(!following);
-    } catch (error) {
-      console.error('Error updating follow state:', error);
+  const handleFollowClick = () => {
+    if (!isLoading) { 
+      toggleFollow(userId, username); 
     }
   };
 
   return (
-    <Button onClick={handleFollowClick}>
-      {following ? 'Unfollow' : 'Follow'}
+    <Button onClick={handleFollowClick} disabled={isLoading}>
+      {isLoading ? (
+        <CircularProgress size={16} /> 
+      ) : isFollowing ? (
+        "Unfollow"
+      ) : (
+        "Follow"
+      )}
     </Button>
   );
 };

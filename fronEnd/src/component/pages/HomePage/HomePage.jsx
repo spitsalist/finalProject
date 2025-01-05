@@ -1,11 +1,9 @@
-// import React, { useEffect, useState } from 'react';
-
-// import { getTimePost } from '../../../api/auth';
-// import { PostLoader } from './PostLoader';
 import { FollowButton } from '../../Buttons/FollowButton/FollowButton';
-// import { PostCard } from './PostCard';
-
-
+import React from "react";
+import { Box, Typography, Grid, Avatar } from "@mui/material";
+import { usePosts } from "../../../context/PostContext"
+import { PostLoader } from "./PostLoader";
+import { PostCard } from "./PostCard";
 
 export const PostHeader = ({ user, currentUserId }) => {  
 // console.log(user)
@@ -33,20 +31,16 @@ export const PostHeader = ({ user, currentUserId }) => {
   );
 };
 
-import React from "react";
-import { Box, Typography, Grid, Avatar } from "@mui/material";
-import { usePosts } from "../../../context/PostContext"
-import { PostLoader } from "./PostLoader";
-import { PostCard } from "./PostCard";
+
 
 export const HomePage = () => {
   const { posts, loading } = usePosts(); 
 
+  if (loading) return <PostLoader />;
+
   return (
     <Box sx={{ padding: "25px 80px", marginBottom: "85px", width: "700px" }}>
-      {loading ? (
-        <PostLoader />
-      ) : posts.length === 0 ? (
+      {posts.length === 0 ? (
         <Typography>No posts available</Typography>
       ) : (
         <Grid container spacing={2}>

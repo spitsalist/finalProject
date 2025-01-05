@@ -34,7 +34,7 @@ export const checkUserExists = async (userId: string) => {
 }
 
 export const checkFollowStatus = async(followerId: string, followingId: string): Promise<boolean> => {
-    const follower = await User.findById(followerId);
+    const follower = await User.findById(followerId)
     if (!follower) throw new Error('Follower not found');
     return follower.following.map(id => id.toString()).includes(followingId);
 }

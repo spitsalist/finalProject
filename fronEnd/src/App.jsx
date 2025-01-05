@@ -7,9 +7,7 @@ import { SignUpPage } from "./component/pages/AuthUser/SignUp";
 import { ResetPassword } from "./component/pages/AuthUser/ResetPassword";
 import { ConfirmResetPassword } from "./component/pages/AuthUser/ConfirmResetPassword";
 import ProtectedLayout from "./component/ProtectedLayout/ProtectedLayout";
-import { NotificationProvider } from "./component/Notification/NotificationContext";
 import { NotFoundPage } from './component/pages/NotFoundPage';
-import { PostsProvider } from "./context/PostContext";
 
 const PrivateRoute = ({ element }) => {
   const token = Boolean(localStorage.getItem("token"));
@@ -25,9 +23,6 @@ function App() {
   ];
 
   return (
-    <NotificationProvider>
-
-    <PostsProvider>
     <BrowserRouter>
       <ThemeProvider theme={btnTheme}>
         <Routes>
@@ -45,8 +40,6 @@ function App() {
       </ThemeProvider>
     
     </BrowserRouter>
-    </PostsProvider>
-    </NotificationProvider>
   );
 }
 

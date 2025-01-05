@@ -23,7 +23,7 @@ export const UserProfile = () => {
         setProfile(profileData);
 
         const postsData = await fetchPosts(userId)
-        console.log(`Fetched posts for userId ${userId}:`, postsData);
+        // console.log(`Fetched posts for userId ${userId}:`, postsData);
 
         setPosts(postsData.data.posts || []);
       } catch (err) {

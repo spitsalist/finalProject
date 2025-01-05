@@ -4,62 +4,59 @@ import { useNotifications } from "./NotificationContext";
 import { PostModal } from "../pages/modal/PostModal";
 import { PostMedia } from "../pages/HomePage/PostMedia";
 import { usePosts } from "../../context/PostContext";
+import { useNavigate } from "react-router-dom";
+import { useFollow } from "../../context/FollowContext";
 
 export const NotificationList = () => {
-  const { posts, postImage } = usePosts();
-  console.log("Posts from PostContext:", posts);
+  const { posts } = usePosts();
   const { notifications, markAsRead, setNotifications, setUnreadCount, unreadCount } = useNotifications();
   const [selectedPost, setSelectedPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { followingState } = useFollow();
 
+  const navigate = useNavigate();
 
   const handleNotificationClick = async (notif) => {
-    console.log("Notification clicked:", notif);
     try {
       await markAsRead(notif._id);
-  
-      const relatedPostId = notif.relatedPost?._id;
-      const relatedPost = posts.find((post) => post._id === relatedPostId);
-  
-      if (relatedPost) {
-        console.log("Selected Post:", relatedPost);
-        setSelectedPost({
-          ...relatedPost, 
-          postId: relatedPost._id,
-          // postImage: notif.relatedPost.image || notif.relatedPost.postImage
-          postImage: relatedPost.image
-    });
-      } else {
-        setSelectedPost({
-          user: notif.relatedUser,
-          caption: notif.content,
-          postId: notif._id,
-          likesCount: 0,
-          postImage: notif.relatedUser?.profileImage || undefined
-        });
+
+      if (notif.type === "follow") {
+        navigate(`/profile/${notif.relatedUser._id}`);
+        return;
       }
-  
-      setIsModalOpen(true);  
-      console.log("Setting isModalOpen to true");
+
+      const relatedPost = posts.find((post) => post._id === notif.relatedPost?._id);
+
+      const userData = relatedPost?.user?._id 
+      ? relatedPost?.user
+      : notif.relatedUser;
+      setSelectedPost({
+      postId: relatedPost?._id || notif.relatedPost?._id,
+      postImage: relatedPost?.image || notif.relatedPost?.image || null,
+      likesCount: relatedPost?.likes?.length || 0,
+      comments: relatedPost?.comments || [],
+      caption: notif.content,
+      user: userData,
+    });
+
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error handling notification click:", error);
     }
   };
 
   const handleCloseModal = () => {
-    console.log("Closing Modal...");
     setIsModalOpen(false);
     setSelectedPost(null);
   };
-
 
   return (
     <>
       <Box sx={{ maxHeight: "425px", overflowY: "auto" }}>
         {notifications && notifications.length > 0 ? (
           [...notifications]
-            .sort((a, b) => (a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1))
+            .sort((a, b) => a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1)
             .map((notif, index) => {
               const notificationId = notif._id || `notif-${index}`;
               return (
@@ -75,14 +72,19 @@ export const NotificationList = () => {
                     borderRadius: "4px",
                     cursor: "pointer",
                     transition: "transform 0.2s ease-in-out",
-                    "&:hover": {
-                      transform: "translateX(2px)",
-                    },
+                    "&:hover": { transform: "translateX(2px)" },
                   }}
                   onClick={async () => {
                     try {
                       await handleNotificationClick(notif);
-                      setNotifications((prev) => prev.filter((n) => n._id !== notif._id));
+                      // setNotifications((prev) => prev.filter((n) => n._id !== notif._id));
+                      setNotifications((prev) => {
+                        const updated = prev.map(n => 
+                          n._id === notif._id ? {...n, isRead: true} : n
+                        );
+                        updated.sort((a, b) => a.isRead - b.isRead);
+                        return updated;
+                      });
                       setUnreadCount((prevCount) => prevCount - 1);
                     } catch (error) {
                       console.error("Error deleting notification", error);
@@ -95,18 +97,26 @@ export const NotificationList = () => {
                       alt={notif.relatedUser?.username}
                       sx={{ width: 30, height: 30, marginRight: "10px" }}
                     />
-                    <Box>
-                      <Typography variant="body3" color="#262626">
-                        {notif.content}
-                      </Typography>
-                    </Box>
+                    <Typography variant="body3">{notif.content}</Typography>
                   </Box>
-                  {notif.relatedPost?.postImage && (
-                    <Box sx={{ marginLeft: "10px" }}>
-                      < PostMedia
-                        image={notif.relatedPost.postImage}
-                        alt={notif.relatedPost?.user?.username || "Post Image"}
-                        style={{ width: "30px", height: "30px", borderRadius: "8px" }}
+                  {notif.relatedPost?.image && (
+                    <Box
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        overflow: "hidden",
+                        borderRadius: "8px",
+                        marginLeft: "10px",
+                      }}
+                    >
+                      <PostMedia
+                        image={notif.relatedPost?.image}
+                        alt="Post Image"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
                       />
                     </Box>
                   )}
@@ -126,14 +136,11 @@ export const NotificationList = () => {
         <PostModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          postId={selectedPost.postId || selectedPost._id}
-          user={selectedPost.user}
-          caption={selectedPost.caption}
-          likesCount={selectedPost.likesCount}
-          postImage={selectedPost.postImage}
-          currentUserId="userA"
+          {...selectedPost}
+          initialFollowing={followingState}
+          // currentUserId="userA"
         />
-      )}
+       )} 
     </>
   );
 };

@@ -21,8 +21,23 @@ export const createNotification = async(
         isRead: false,
         })
         await notification.save()
-        const populatedNotification = await notification.populate('relatedUser', 'username profileImage')
-        
+        const populatedNotification = await notification.populate('relatedPost', 'image user')
+        // const populatedNotification = await notification.populate([
+        //     {
+        //       path: 'relatedPost',
+        //       populate: {
+        //         path: 'user',
+        //         select: 'username profileImage image isFollowing',
+        //       },
+        //     },
+        //     {
+        //       path: 'relatedUser',
+        //       select: 'username profileImage isFollowing',
+        //     },
+        //   ]);
+        console.log("Populated notification:", populatedNotification);
+        console.log(`Sending notification to user: ${userId}`);
+
         io.to(userId).emit('newNotification', populatedNotification)
         return populatedNotification
 }
@@ -33,6 +48,8 @@ export const messageNotification =async(userId:string, username:string, content:
 
 export const likeNotification = async(userId:string, postOwner:string, username:string, postId:string)=> {
     if(postOwner !== userId){
+        console.log("Creating like notification for postId:", postId);
+
         await createNotification(postOwner, 'like', `${username} liked your post`, userId, postId)
     }
 }

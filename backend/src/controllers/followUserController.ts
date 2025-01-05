@@ -9,7 +9,7 @@ export const followUser = async (req: any, res:Response) => {
     try{
         const {userToFollowId} = req.body
         const userId  = req.user.id
-        
+
         await checkUserExists(userToFollowId)
 
         if(userId === userToFollowId){
@@ -37,8 +37,8 @@ export const followUser = async (req: any, res:Response) => {
             return sendError(res, 'user to follow not found', 404)
         }
 
-          await followNotification(userId,userToFollowId, req.user.username)
           
+          await followNotification(userId, userToFollowId, req.user.username)
           return sendSuccess(res, {}, 'User followed successfully', 200)
         
     }catch(error:any){
