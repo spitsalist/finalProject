@@ -15,15 +15,15 @@ export const UserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // setPosts([]);
     const loadUserProfileAndPosts = async () => {
       try {
         setLoading(true)
         const profileData = await fetchProfile(userId)
+        // console.log("profile ", profileData);
+
         setProfile(profileData);
 
         const postsData = await fetchPosts(userId)
-        // console.log(`Fetched posts for userId ${userId}:`, postsData);
 
         setPosts(postsData.data.posts || []);
       } catch (err) {
@@ -36,6 +36,7 @@ export const UserProfile = () => {
 
     loadUserProfileAndPosts();
   }, [userId]);
+  
 
   if (loading) {
     return <Typography>Loading...</Typography>;
@@ -78,11 +79,13 @@ export const UserProfile = () => {
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               {profile.username}
             </Typography>
+          
             <FollowButton
               userId={profile._id}
               username={profile.username}
-              initialFollowing={profile.isFollowing}
+              // initialFollowing={profile.isFollowing}
             />
+          
             <Button
               variant="contained"
               sx={{

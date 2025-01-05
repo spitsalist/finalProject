@@ -29,7 +29,7 @@ export const FollowProvider = ({ children }) => {
   }
 
   return (
-    <FollowContext.Provider value={{ followingState, toggleFollow, loadingState }}>
+    <FollowContext.Provider value={{ followingState, setFollowingState, toggleFollow, loadingState }}>
       {children}
     </FollowContext.Provider>
   );

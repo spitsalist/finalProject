@@ -1,28 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { fetchProfile, getTimePost } from "../../api/auth";
+import { fetchProfile } from "../../api/auth";
 import { PostMedia } from "./HomePage/PostMedia";
 import { Box, Typography, Avatar, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { SideMenu } from '../SideMenu/SideMenu';
-// import { PostHeader } from "./HomePage/HomePage";
+import { usePosts } from "../../context/PostContext";
 
 export const Profile = () => {
   const [profile, setProfile] = useState(null);
-  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate()
+  const {posts, loading: loadingPosts} = usePosts()
 
   useEffect(() => {
     const loadProfileAndPosts = async () => {
       try {
         const profileData = await fetchProfile();
         setProfile(profileData);
-
-        const postsData = await getTimePost();
-        setPosts(postsData.data.posts || []);
       } catch (err) {
-        console.error("Error loading profile or posts:", err);
         setError(err.message || "Failed to load data");
       } finally {
         setLoading(false);
@@ -32,7 +28,7 @@ export const Profile = () => {
     loadProfileAndPosts();
   }, []);
 
-  if (loading) {
+  if (loading || loadingPosts) {
     return <Typography>Loading...</Typography>;
   }
 
@@ -43,8 +39,6 @@ export const Profile = () => {
   return (
     <Box sx={{ maxWidth: "935px", margin: "auto", padding: "20px", marginBottom:'120px' }}>
      <SideMenu profileImage={profile.profileImage} />
-     {/* <PostHeader profileImage={profile.profileImage} /> */}
-
       <Box
         sx={{
           display: "flex",
@@ -63,7 +57,6 @@ export const Profile = () => {
             border: "2px solid #DBDBDB",
           }}
         />
-
         <Box>
           <Box
             sx={{
@@ -84,7 +77,6 @@ export const Profile = () => {
                 fontSize: "14px",
               }}
               onClick={() => navigate('/edit-profile')}
-
             >
               Edit Profile
             </Button>

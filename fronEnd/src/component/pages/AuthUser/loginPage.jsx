@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {  Button, Typography, Box, Link } from "@mui/material";
+import {  Button, Typography, Box, Link, Alert } from "@mui/material";
 import ichLogo from '../../../assets/ICHGRA.svg';
 import bg from "../../../assets/Background.svg";
 import { login } from '../../../api/auth';
@@ -12,13 +12,16 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState("");
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const resultData = await login(email, password);
       const { token } = resultData.data;
-      console.log('Login successfully', resultData.data);
+      // console.log('Login successfully', resultData.data);
+      setSuccessMessage("Login successfully");
           localStorage.setItem('token', token);
 
       setTimeout(() => {
@@ -41,6 +44,9 @@ const LoginPage = () => {
           <img alt="ICHGRAM LOGO IMAGE" src={ichLogo} />
 
           <form onSubmit={handleLogin} style={{ padding: '15px' }}>
+            {successMessage && <Alert severity='success' sx={{marginBottom: 2}}>{successMessage}</Alert>}
+            {error && <Alert severity='error' sx={{marginBottom: 2}}>{error}</Alert>}
+            
             <InputField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
             <InputField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 

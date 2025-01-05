@@ -34,7 +34,7 @@ export const PostHeader = ({ user, currentUserId }) => {
 
 
 export const HomePage = () => {
-  const { posts, loading } = usePosts(); 
+  const { posts, loading} = usePosts(); 
 
   if (loading) return <PostLoader />;
 

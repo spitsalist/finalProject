@@ -14,7 +14,7 @@ export const ConfirmResetPassword = () => {
   const queryParams = new URLSearchParams(location.search)
   const token = queryParams.get('token')
 
-  console.log('recived token:', token)
+  // console.log('recived token:', token)
 
   if (!token) {
     setErrorMessage("Token is missing or invalid.");
