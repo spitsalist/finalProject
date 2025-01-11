@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { CardContent, Divider, Typography, Box, IconButton } from "@mui/material";
 import { PostActions } from "./PostActions";
 import msgIco from "../../../assets/msg_ico.svg";
 import { PostModal } from "../modal/PostModal";
+import { useComments } from "../../../hooks/useComments";
 
 export const PostContent = ({
   user,
@@ -12,10 +13,14 @@ export const PostContent = ({
   postImage, 
   initialLikesCount,
   initialLiked,
+  
+  
 }) => {
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [isLiked, setIsLiked] = useState(initialLiked)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const {comments} = useComments(postId, 'userA')
+  const commentsContainerRef = useRef(null)
 
   const handleLikeClick = (newLikeState) => {
     setIsLiked(newLikeState.isLiked);
@@ -59,13 +64,10 @@ export const PostContent = ({
             </span>
           )}
         </Typography>
-
         <Typography variant="caption" color="textSecondary">
           View all {commentsCount || 0} comments
-        </Typography>
-
+        </Typography>       
         <Divider sx={{ flex: 1, mt: 3 }} />
-
       </CardContent>
       
       <PostModal
@@ -80,6 +82,7 @@ export const PostContent = ({
         commentsCount={commentsCount}
         initialFollowing={user.isFollowing }
         currentUserId='userA'
+        comments={comments} 
       />
     </>
   );

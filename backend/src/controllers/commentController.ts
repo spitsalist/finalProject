@@ -41,7 +41,7 @@ export const commentOnPost = async (req: any, res: Response) => {
       await post.save();
   
       if (post.user.toString() !== userId) {
-        await commentNotification(userId, username, comment._id as string, postId, post.user.toString() as string);
+        await commentNotification(userId, username, comment._id as string, postId, post.user.toString());
       }
       if (
         parentCommentId &&
@@ -73,14 +73,15 @@ export const commentOnPost = async (req: any, res: Response) => {
             select: "username profileImage",
           },
         })
-        .sort({ createdAt: 1 });
+        .sort({ createdAt: 1 })
+        .lean()
 
         const enrichedComments = await Promise.all(
           comments.map(async(comment)=>{
             const likeCounter = await Like.countDocuments({comment: comment._id})
             const isLiked = await Like.exists({comment: comment._id, user:userId})
             return {
-              ...comment.toObject(),
+              ...comment,
               likeCounter,
               isLiked: !!isLiked,
             }
@@ -99,14 +100,19 @@ export const likeComment = async (req: any, res: Response) => {
     const { commentId } = req.body;
     const userId = req.user.id;
     const username = req.user.username;
+    console.log("User ID:", userId);
+    console.log("Comment ID:", commentId);
 
 
-    const comment = await Comment.findById(commentId);
-    if (!comment) {
+    const comment = await Comment.findById(commentId).populate('post')
+    console.log("Comment Data:", comment);
+    if (!comment || !comment.post) {
       return sendError(res, "Comment not found", 404);
     }
 
-    const existingLike = await Like.findOne({ user: userId, comment: commentId });
+    const existingLike = await Like.findOne({ user: userId, comment: commentId })
+    console.log("Existing Like:", existingLike);
+
     if (existingLike) {
       await Like.deleteOne({ _id: existingLike._id });
       const likeCounter = await Like.countDocuments({ comment: commentId });
@@ -120,11 +126,12 @@ export const likeComment = async (req: any, res: Response) => {
 
     const like = new Like({
       user: userId,
+      post: comment.post._id.toString(),
       comment: commentId,
     });
     await like.save();
     const likeCounter = await Like.countDocuments({ comment: commentId })
-    await createLikeNotification(userId, username, commentId, comment.user.toString());
+    await createLikeNotification(userId, username, commentId, comment.user.toString(), comment.post._id.toString());
     console.log("Notification parameters:", {
       userId,
       username,

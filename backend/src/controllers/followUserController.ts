@@ -1,7 +1,7 @@
 import { Response } from "express"
 import { sendError, sendSuccess } from "../utils/helpers/responseHelper"
 import { followNotification } from "../services/notificationService/notificationService"
-import { checkFollowStatus, checkUserExists, getFollowingIds } from "../utils/followUtils/followUtils" //checkFollowStatus
+import { checkFollowStatus, checkUserExists } from "../utils/followUtils/followUtils" //checkFollowStatus
 import { getAllPosts } from "../services/postService"
 import { User } from "../models/User"
 
@@ -9,11 +9,12 @@ export const followUser = async (req: any, res:Response) => {
     try{
         const {userToFollowId} = req.body
         const userId  = req.user.id
+        console.log('followUser invoked with:', { userToFollowId, userId });
 
         await checkUserExists(userToFollowId)
 
-        if(userId === userToFollowId){
-            return sendError(res, 'you cannot follow yourself', 400)
+        if (userId === userToFollowId) {
+            return sendError(res, 'you cannot follow yourself', 400);
         }
 
         const isAlreadyFollowing = await checkFollowStatus(userId, userToFollowId)
@@ -37,7 +38,6 @@ export const followUser = async (req: any, res:Response) => {
             return sendError(res, 'user to follow not found', 404)
         }
 
-          
           await followNotification(userId, userToFollowId, req.user.username)
           return sendSuccess(res, {}, 'User followed successfully', 200)
         
@@ -89,15 +89,13 @@ export const getTimePosts = async (req:any, res:any) => {
       if(!posts || posts.length === 0) {
         return res.status(404).json({message: 'no post found'})
       }
-
-      const followingIds = await getFollowingIds(userId)
   
       const updatedPosts =  posts.map((post: any) => {
-        const isFollowing = followingIds.includes(post.user._id.toString())
-        return {...post, user:{...post.user, isFollowing}}
+        return {...post, user:{...post.user}}
       });
     //   console.log(updatedPosts); 
     // console.log(JSON.stringify(updatedPosts, null, 2))
+    
 
       return sendSuccess(res, { posts: updatedPosts }, "Posts fetched successfully", 200);
     } catch (error) {

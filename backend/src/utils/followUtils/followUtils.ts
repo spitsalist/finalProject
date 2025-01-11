@@ -18,7 +18,7 @@ export const getFollowingOfUser = async(userId: string) => {
 }
 
 export const getFollowingIds = async(userId: string): Promise<string[]> => {
-    const user = await User.findById(userId);
+    const user = await User.findById(userId)
     if (!user) {
         throw new Error('User not found');
     }

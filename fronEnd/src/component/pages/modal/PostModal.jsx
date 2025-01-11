@@ -1,52 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Modal, Box, Typography, TextField, Button, InputAdornment } from "@mui/material";
-import { useComments } from "../../../hooks/useComments";
 import { PostMedia } from "../HomePage/PostMedia";
 import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
-// import { UserAvatar } from "./UserAvatar";
-// import { Comment } from "./Comment";
-
-
-
-
-
-const Comment = ({
-  comment,
-  currentUserId, 
-  onReply,
-  onLike,
-  renderReplies,
-}) => {
-  const isAuthor = comment.user._id === currentUserId; 
-  const canReply = !isAuthor || (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
-  
-
-  return (
-    <Box key={comment._id} sx={{ mb: 2 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-          <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
-          {comment.user?.username}
-        </Typography>
-        <Button size="small" onClick={() => onLike(comment._id)}
-           style={{
-            color: comment.isLiked ? "red" : "gray",
-          }}
-          >
-          ❤️ {comment.likeCounter > 0 ? comment.likeCounter : ''}
-        </Button>
-      </Box>
-      <Typography variant="body2">{comment.text}</Typography>
-      {canReply && (
-        <Button size="small" onClick={() => onReply(comment._id)} sx={{ mt: 1 }}>
-          Reply
-        </Button>
-      )}
-      {renderReplies(comment._id)}
-    </Box>
-  );
-};
-
+import { useComments } from "../../../hooks/useComments";
+import { Comment } from "../Comment/Comment"; 
 
 const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
   <img
@@ -64,11 +21,9 @@ export const PostModal = ({
   caption,
   postImage,
   likesCount,
-  initialFollowing,
   currentUserId,
+  commentId,
 }) => {
-
-//  console.log(postId)
   const [newComment, setNewComment] = useState("");
   const {
     comments,
@@ -76,7 +31,14 @@ export const PostModal = ({
     error,
     addNewComment,
     toggleLikeComment,
-  } = useComments(postId, currentUserId);
+  } = useComments(postId, currentUserId, commentId);
+
+  const commentsContainerRef = useRef(null)
+  useEffect(() => {
+    if(commentsContainerRef.current){
+      commentsContainerRef.current.scrollTop = commentsContainerRef.current.scrollHeight
+    }
+  }, [comments])
 
   const handleAddComment = async (parentCommentId = null) => {
     await addNewComment(newComment, parentCommentId);
@@ -84,6 +46,8 @@ export const PostModal = ({
   };
 
   const renderComments = (parentId = null) => {
+    if (!Array.isArray(comments)) return null;
+
     const filteredComments = comments.filter(
       (comment) => String(comment.parentComment) === String(parentId)
     );
@@ -96,6 +60,7 @@ export const PostModal = ({
         onReply={(id) => handleAddComment(id)}
         onLike={toggleLikeComment}
         renderReplies={(id) => renderComments(id)}
+        isLiked={comment.isLiked}
       />
     ));
   };
@@ -157,17 +122,16 @@ export const PostModal = ({
             <Typography variant="h6">
               <strong>{user?.username}</strong>
             </Typography>
-            <FollowButton
-              userId={user._id}
-              username={user.username}
-              initialFollowing={initialFollowing}
-            />
+            <FollowButton userId={user._id} username={user.username} />
           </Box>
+
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
             {caption}
           </Typography>
 
-          <Box sx={{ flexGrow: 1, overflowY: "auto", marginBottom: "10px" }}>
+          <Box 
+          ref={commentsContainerRef}
+          sx={{ flexGrow: 1, overflowY: "auto", marginBottom: "10px", maxHeight:'240px' }}>
             {loading ? (
               <Typography>Loading comments...</Typography>
             ) : error ? (
@@ -179,7 +143,7 @@ export const PostModal = ({
 
           <Box sx={{ paddingTop: "10px" }}>
             <Typography variant="body2" sx={{ marginBottom: "10px" }}>
-              <strong>{likesCount}</strong> {likesCount ? "like" : "likes"}
+              <strong>{likesCount}</strong> {likesCount === 1 ? "like" : "likes"}
             </Typography>
             <TextField
               fullWidth
@@ -194,6 +158,7 @@ export const PostModal = ({
                       color="primary"
                       size="small"
                       onClick={() => handleAddComment()}
+                      disabled={!newComment.trim()}
                     >
                       Send
                     </Button>

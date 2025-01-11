@@ -83,7 +83,7 @@ export const UserProfile = () => {
             <FollowButton
               userId={profile._id}
               username={profile.username}
-              // initialFollowing={profile.isFollowing}
+              initialFollowing={profile.isFollowing}
             />
           
             <Button

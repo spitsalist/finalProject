@@ -17,7 +17,10 @@ export const NotificationContext = createContext(null);
       try {
         const response = await getNotifications(); 
         if (response.status === "success") {
+          console.log("Fetched notifications:", response.data.notifications);
+
           setNotifications(response.data.notifications); 
+          
           setUnreadCount(response.data.notifications.filter((notif) =>
           !notif.isRead).length)
         } else {
@@ -53,10 +56,10 @@ export const NotificationContext = createContext(null);
       if (response.success) {
         setNotifications((prev) =>
           prev.map((notif) =>
-            notif._id === notificationId? { ...notif, isRead: true  } : notif
+            notif._id === notificationId ? { ...notif, isRead: true  } : notif
           )
         );
-        setUnreadCount((prevCount) => prevCount -1)
+        setUnreadCount((prevCount) => prevCount - 1)
       }
     } catch (error) {
       console.error("Failed to mark notification as read:", error);

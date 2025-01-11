@@ -170,9 +170,6 @@ export const CreatePostModal = ({ isOpen, onClose }) => {
             >
               {caption.length}/{maxCaptionLength}
             </Typography>
-
-
-
             <Box
               sx={{
                 flex: 1,

@@ -6,9 +6,7 @@ export const PostMedia = ({ image }) => (
     <CardMedia
       component="img"
       image={`data:image/png;base64, ${image}`}
-      alt='Post image'
-      // style={{width:'100%', maxWidth:'100%', height:'auto', borderRadius: '3.5px', objectFit:'cover'}}
-      
+      alt='Post image'      
     />
   ) : null
 );

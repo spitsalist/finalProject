@@ -5,7 +5,7 @@ import { useFollow } from "../../../context/FollowContext";
 export const FollowButton = ({ userId, username, initialFollowing }) => {
   const { followingState, toggleFollow, loadingState, setFollowingState } = useFollow();
   const isFollowing = followingState[userId] ?? false;
-  const isLoading = loadingState[userId] ?? false
+  const isLoading = loadingState[userId] ??
 
   useEffect(() => {
     if(followingState[userId] === undefined && initialFollowing !== undefined)

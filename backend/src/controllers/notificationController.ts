@@ -11,16 +11,16 @@ export const getNotifications = async (req: any, res: Response): Promise<void> =
 
             .populate({
                 path: "relatedPost",
-                    select: "image user",
-                    populate:{path: 'user', select: 'username profiImage'},
+                    select: "image user likes comments",
+                    populate:{path: 'user', select: 'username profileImage '},
                })
             .populate({
                 path: "relatedUser",
-                select: "username profileImage",
-            })
-
-            // .populate("relatedUser", "username profileImage")
-            // .populate("relatedPost", "postImage")
+                select: "username profileImage ",
+            }).lean()
+    
+            console.log("Fetched notifications:", notifications);
+  
 
         sendSuccess(res, {success: true, notifications });
     } catch (error: any) {
@@ -31,23 +31,24 @@ export const getNotifications = async (req: any, res: Response): Promise<void> =
 export const markNotificationAsRead = async (req:any, res:any) => {
     try {
     const {notificationId} = req.params;
-      console.log(`Marking notification as read: ${notificationId}`); 
+    //   console.log(`Marking notification as read: ${notificationId}`); 
 
     const updateNotification = await Notification.findByIdAndUpdate(
         notificationId,
         {isRead: true},
         {new: true}
     )
-    // .populate("relatedUser", "username profileImage")
-    // .populate({path: 'relatedPost',
-    //     select:'postImage user caption',
-    //     populate:{
-    //         path:'user',
-    //         select:'username profileImage'
-    //     }
-    // })
-    .populate('relatedUser', 'username profileImage')
-    .populate('relatedPost', 'image')
+
+    .populate({
+        path: "relatedPost",
+        select: "image user likes comments", 
+        populate: { path: "user", select: "username profileImage" },
+    })
+    .populate({
+        path: "relatedUser",
+        select: "username profileImage",
+    });
+    console.log("Scheduled deletion for notification:", notificationId);
     if(!updateNotification){
         console.error("Notification not found");
 
@@ -57,6 +58,8 @@ export const markNotificationAsRead = async (req:any, res:any) => {
     setTimeout(async()=>{
         try{
         await Notification.findByIdAndDelete(notificationId)
+        console.log("Deleted notification:", notificationId);
+
         }catch(error){
             console.error('Error deleting notification', error)
         }

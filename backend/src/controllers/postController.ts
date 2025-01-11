@@ -53,9 +53,8 @@ export const addPost = async (req: any, res: Response) => {
           .populate("likes")
           .populate("comments")
           .populate("image")
-          .sort({ createdAt: -1 });
+          .lean()
 
-          // console.log("Total posts", posts.length); 
 
 
       } else if (userId) {

@@ -16,6 +16,6 @@ import mongoose,{Document,Schema} from "mongoose";
     comments: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}],
 }, {timestamps: true})
 
-postSchema.index({ user: 1})
+postSchema.index({ user: 1, comments:1})
 
 export const Post = mongoose.model<IPost>('Post', postSchema)

@@ -19,7 +19,7 @@ export const Chat = () => {
 
     chatSocket.emit("getCurrentUser", {}, (response) => {
       if (response.success) {
-        console.log("Current user data:", response);
+        // console.log("Current user data:", response);
 
         setCurrentUserId(response.userId);
       } else {

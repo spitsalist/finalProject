@@ -14,6 +14,6 @@ const commentSchema: Schema<IComment> = new Schema({
     parentComment: {type: mongoose.Schema.Types.ObjectId, ref: 'Comment'},
 }, {timestamps: true})
 
-commentSchema.index({post: 1, user: 1})
+commentSchema.index({post: 1, user: 1}, {unique: true})
 
 export const Comment = mongoose.model<IComment>('Comment', commentSchema)

@@ -137,12 +137,12 @@ export const togglePrivacy = async (isPrivate) => {
   }
 };
 
-export const followUser = async (userToFollowId, username) => {
+export const followUser = async (userToFollowId) => {
   try {
     const token = localStorage.getItem("token");
     const response = await axios.post(
       `${BASE_URL}/follow`,
-      { userToFollowId, user: username },
+      { userToFollowId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     return response.data;

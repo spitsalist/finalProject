@@ -11,7 +11,7 @@ export const PostsProvider = ({ children }) => {
     const loadPosts = async () => {
       try {
         const fetchedPosts = await getTimePost();
-        setPosts(fetchedPosts.data.posts || []);
+        setPosts(fetchedPosts?.data?.posts || []);
       } catch (error) {
         console.error("Error fetching posts:", error);
       } finally {

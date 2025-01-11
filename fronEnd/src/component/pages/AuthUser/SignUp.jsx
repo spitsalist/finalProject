@@ -19,7 +19,7 @@ export const SignUpPage = () => {
       try {
         const resultData = await register(fullName, username, email, password); 
         localStorage.setItem('token', resultData.data.token); 
-        console.log('Registration successful', resultData);
+        console.log('Registration successfuly', resultData);
         navigate('/home'); 
       } catch (err) {
         setError('Registration failed. Please try again.');

@@ -6,7 +6,6 @@ import { PostLoader } from "./PostLoader";
 import { PostCard } from "./PostCard";
 
 export const PostHeader = ({ user, currentUserId }) => {  
-// console.log(user)
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px', justifyContent: 'space-between' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -30,8 +29,6 @@ export const PostHeader = ({ user, currentUserId }) => {
     </Box>
   );
 };
-
-
 
 export const HomePage = () => {
   const { posts, loading} = usePosts(); 

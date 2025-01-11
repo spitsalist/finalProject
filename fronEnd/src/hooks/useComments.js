@@ -49,8 +49,11 @@ export const useComments = (postId, currentUserId) => {
   };
 
   const toggleLikeComment = async (commentId) => {
+    // console.log("Attempting to toggle like for comment:", commentId)
+
     try {
       const response = await likeComment(commentId);
+      // console.log("Response from server:", response)
       setComments((prev) =>
         prev.map((comment) =>
           comment._id === commentId

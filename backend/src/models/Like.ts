@@ -11,6 +11,6 @@ const likeSchema: Schema<ILike> = new Schema({
     comment: {type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}
 }, {timestamps: true})
 
-likeSchema.index({ user:1, post: 1, comment:1}, {unique: true, sparse: true})
+likeSchema.index({ user:1, post: 1, comment:1}, {unique: true})
 
 export const Like = mongoose.model<ILike>('Like', likeSchema)

@@ -13,7 +13,7 @@ import ExploreIcon from "../../assets/explore_icon.svg";
 import ChatIcon from "../../assets/Messenger_icon.svg";
 import NotificationsIcon from "../../assets/like_icon.svg";
 import AddBoxIcon from "../../assets/create_icon.svg";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import logo from '../../assets/ICHGRA.svg';
 import { DropMenu } from "../DropMenu/DropMenu";
 import { NotificationList } from "../Notification/NotificationList";
@@ -159,7 +159,7 @@ export const SideMenu = ({profileImage}) => {
     color="error"
     onClick={() => {
       localStorage.removeItem("token");
-      navigate("/login");
+      navigate("/login", replace);
     }}
     sx={{
       width: "80px",

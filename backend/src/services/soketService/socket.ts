@@ -51,15 +51,23 @@ io.on("connection", async (socket) => {
 
       try{
         const notifications = await Notification.find({user: socket.data.userId})
-        .sort({createdAt: -1})
-        .populate('relatedUser', 'username profileImage')
-        .populate('relatedPost', 'postImage')
+        .populate({
+          path: 'relatedPost',
+          populate: [
+              { path: 'likes', select: 'username' },
+          ],
+      })
+      .populate('relatedUser', 'username profileImage');
         console.log("Fetched notifications:", notifications);
+
+
+        
         callback({success: true, notifications})
       }catch(error:any){
         console.error('error fetching notifications', error)
       }
     })    
+    
 
     }catch(error:any){
       console.error('invalid token', error)
