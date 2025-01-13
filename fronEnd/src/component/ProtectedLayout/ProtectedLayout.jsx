@@ -8,6 +8,7 @@ import { Profile } from "../pages/Profile";
 import { EditProfile } from "../pages/EditProfile";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { UserProfile } from "../UserProfile";
+
 function ProtectedLayout() {
   const location = useLocation();
 

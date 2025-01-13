@@ -28,6 +28,7 @@ export const Profile = () => {
     loadProfileAndPosts();
   }, []);
 
+
   if (loading || loadingPosts) {
     return <Typography>Loading...</Typography>;
   }

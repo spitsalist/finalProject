@@ -4,11 +4,13 @@ import { handleFileUpload } from '../services/fileService';
 
 export const getUserProfile = async (req:any, res:any) => {
   try {
-    const userId = req.params.id || req.user.id    
+    const userId = req.params.id || req.user.id   
+    const currentUserId = req.user.id
     const user = await User.findById(userId).select('-password');
 
     if (!user) return sendError(res, 'User not found', 404);
 
+    const isFollowing = user.followers.includes(currentUserId)
     sendSuccess(res, {
       username: user.username,
       isPrivate: user.isPrivate,
@@ -18,6 +20,7 @@ export const getUserProfile = async (req:any, res:any) => {
       webSite: user.webSite,
       followers: user.followers.length, 
       following: user.following.length, 
+      isFollowing,
     });
   } catch (error) {
     console.error('Error fetching user profile:', error);

@@ -22,7 +22,7 @@ export const LikeProvider =({children}) =>{
                         ...prev,
                         [postId]: { likesCount, isLiked: updatedIsLiked },
                     };
-                    console.log("Updated likeStates after toggle:", updatedStates);
+                    // console.log("Updated likeStates after toggle:", updatedStates);
                     return updatedStates;
                 });
             } else {
