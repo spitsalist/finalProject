@@ -174,7 +174,7 @@ export const fetchProfile = async (userId) => {
 
     headers: { Authorization: `Bearer ${token}` },
   });
-    console.log(response.data)
+    // console.log(response.data)
     return response.data.data;
   } catch (error) {
     console.error("Error fetching profile:", error);

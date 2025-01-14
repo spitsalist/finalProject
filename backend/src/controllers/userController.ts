@@ -12,6 +12,7 @@ export const getUserProfile = async (req:any, res:any) => {
 
     const isFollowing = user.followers.includes(currentUserId)
     sendSuccess(res, {
+      _id: user._id,
       username: user.username,
       isPrivate: user.isPrivate,
       fullName: user.fullName,

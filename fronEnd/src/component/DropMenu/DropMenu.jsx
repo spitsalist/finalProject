@@ -3,28 +3,42 @@ import { Box, IconButton, InputBase, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { searchUsers } from "../../api/auth";
 import { Link } from "react-router-dom";
+import { useUser } from "../../context/userContext";
 
 export const DropMenu = ({ title, isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
+  const {user} = useUser()
+  const currentUserId = user?._id 
+  // console.log('currend user id', currentUserId)
   const [query, setQuery] = useState("");
   const [userResults, setUserResults] = useState([]);
+  const [isLoading, setLoading] = useState(false)
 
   const handleSearchChange = async (event) => {
     const searchTerm = event.target.value;
     setQuery(searchTerm);
 
-    if (searchTerm.trim()) {
+    if (searchTerm.trim() && currentUserId) {
       try {
-        const users = await searchUsers(searchTerm)
-        setUserResults(users);
+        setLoading(true)
+        const response = await searchUsers(searchTerm)
+        const users = Array.isArray(response.users) ? response.users : []
+        const filtredUsers = users.filter((user) => user._id !== currentUserId)
+        // console.log('filtred user', filtredUsers)
+        setUserResults(filtredUsers);
       } catch (error) {
         console.error("Error searching users:", error);
+        setUserResults([]);
+
+      }finally{
+        setLoading(false)
       }
     } else {
       setUserResults([]);
     }
-  };
+  }
+
+  if (!isOpen) return null;
+
 
   return (
     <Box
@@ -86,9 +100,12 @@ export const DropMenu = ({ title, isOpen, onClose, children }) => {
         </IconButton>
       </Box>
 
-      <Box>
-        {userResults && userResults.users?.length > 0 ? (
-          userResults.users.map((user) => (
+      <Box sx={{flex:1, overflowY: 'auto'}}>
+        {isLoading ? (
+          <Typography sx={{textAlign: 'center', marginTop: '20px'}}>Loading...</Typography>
+        ) :
+        userResults.length > 0 ? (
+          userResults.map((user) => (
             <Link
               key={user._id}
               to={`/profile/${user._id}`} 

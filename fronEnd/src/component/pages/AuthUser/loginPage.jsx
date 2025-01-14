@@ -14,7 +14,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
 
-
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
