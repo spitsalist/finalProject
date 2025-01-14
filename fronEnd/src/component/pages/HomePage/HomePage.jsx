@@ -10,7 +10,7 @@ export const PostHeader = ({ user, currentUserId }) => {
     <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px', justifyContent: 'space-between' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Avatar 
-          src={user?.profileImage} 
+          src={user.profileImage} 
           alt={user?.username} 
           sx={{ marginRight: '10px' }} 
         />
@@ -37,6 +37,7 @@ export const HomePage = () => {
 
   return (
     <Box sx={{ padding: "25px 80px", marginBottom: "85px", width: "700px" }}>
+
       {posts.length === 0 ? (
         <Typography>No posts available</Typography>
       ) : (

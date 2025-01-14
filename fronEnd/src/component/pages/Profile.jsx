@@ -1,33 +1,14 @@
-import React, { useEffect, useState } from "react";
 import { fetchProfile } from "../../api/auth";
 import { PostMedia } from "./HomePage/PostMedia";
 import { Box, Typography, Avatar, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { SideMenu } from '../SideMenu/SideMenu';
 import { usePosts } from "../../context/PostContext";
+import { useUser } from "../../context/userContext";
 
 export const Profile = () => {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const {user, loading, error} = useUser()
   const navigate = useNavigate()
   const {posts, loading: loadingPosts} = usePosts()
-
-  useEffect(() => {
-    const loadProfileAndPosts = async () => {
-      try {
-        const profileData = await fetchProfile();
-        setProfile(profileData);
-      } catch (err) {
-        setError(err.message || "Failed to load data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProfileAndPosts();
-  }, []);
-
 
   if (loading || loadingPosts) {
     return <Typography>Loading...</Typography>;
@@ -39,7 +20,6 @@ export const Profile = () => {
 
   return (
     <Box sx={{ maxWidth: "935px", margin: "auto", padding: "20px", marginBottom:'120px' }}>
-     <SideMenu profileImage={profile.profileImage} />
       <Box
         sx={{
           display: "flex",
@@ -50,8 +30,8 @@ export const Profile = () => {
         }}
       >
         <Avatar
-          src={profile.profileImage }
-          alt={profile.username}
+          src={user.profileImage }
+          alt={user.username}
           sx={{
             width: 100,
             height: 100,
@@ -68,7 +48,7 @@ export const Profile = () => {
             }}
           >
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {profile.username}
+              {user.username}
             </Typography>
             <Button
               variant="outlined"
@@ -94,27 +74,27 @@ export const Profile = () => {
               <strong>{posts.length}</strong> posts
             </Typography>
             <Typography variant="body1">
-              <strong>{profile.followers || 0}</strong> followers
+              <strong>{user.followers || 0}</strong> followers
             </Typography>
             <Typography variant="body1">
-              <strong>{profile.following || 0}</strong> following
+              <strong>{user.following || 0}</strong> following
             </Typography>
           </Box>
         </Box>
       </Box>
 
       <Box sx={{ textAlign: "left", marginBottom: "30px", marginLeft:'195px' }}>
-        <Typography sx={{ fontWeight: "bold" }}>{profile.fullName}</Typography>
-        <Typography>{profile.bio || "Short bio placeholder"}</Typography>
-        {profile.webSite && (
+        <Typography sx={{ fontWeight: "bold" }}>{user.fullName}</Typography>
+        <Typography>{user.bio || "Short bio placeholder"}</Typography>
+        {user.webSite && (
           <Typography
             component="a"
-            href={profile.webSite}
+            href={user.webSite}
             target="_blank"
             rel="noopener noreferrer"
             sx={{ color: "#00376b", textDecoration: "none", fontWeight: "bold" }}
           >
-            {profile.webSite}
+            {user.webSite}
           </Typography>
         )}
       </Box>

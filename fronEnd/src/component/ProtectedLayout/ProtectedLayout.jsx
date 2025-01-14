@@ -8,9 +8,11 @@ import { Profile } from "../pages/Profile";
 import { EditProfile } from "../pages/EditProfile";
 import { NotFoundPage } from "../pages/NotFoundPage";
 import { UserProfile } from "../UserProfile";
+import { useUser } from "../../context/userContext";
 
 function ProtectedLayout() {
   const location = useLocation();
+  const {user} = useUser()
 
   const routesWithSideMenu = ["/home", "/explore", "/profile", "/edit-profile"];
   const isSideMenuVisible = routesWithSideMenu.some((path) =>
@@ -21,7 +23,7 @@ function ProtectedLayout() {
 
   return (
     <>
-      {isSideMenuVisible && <SideMenu />}
+      {isSideMenuVisible && <SideMenu  profileImage={user?.profileImage}/>}
 
       <div style={{ flex: 1, marginLeft: isSideMenuVisible ? "250px" : "0px" }}>
         <Routes>

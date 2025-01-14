@@ -7,8 +7,6 @@ import { FollowButton } from './Buttons/FollowButton/FollowButton'
 
 export const UserProfile = () => {
   const { userId } = useParams(); 
-
-  console.log(userId)
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +18,7 @@ export const UserProfile = () => {
       try {
         setLoading(true)
         const profileData = await fetchProfile(userId)
-        console.log("profile ", profileData);
+        // console.log("profile ", profileData);
 
         setProfile({...profileData, _id: profileData._id || userId});
 
@@ -45,7 +43,6 @@ export const UserProfile = () => {
   if (error) {
     return <Typography color="error">{error}</Typography>;
   }
-
   
   return (
     <Box sx={{ maxWidth: "935px", margin: "auto", padding: "20px", marginBottom: "120px" }}>

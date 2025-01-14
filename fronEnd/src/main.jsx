@@ -5,16 +5,19 @@ import { FollowProvider } from './context/FollowContext.jsx'
 import { NotificationProvider } from './component/Notification/NotificationContext.jsx'
 import { PostsProvider } from './context/PostContext.jsx'
 // import { LikeProvider } from './context/LikeContext.jsx'
+import { UserProvider } from './context/userContext';
 
 createRoot(document.getElementById('root')).render(
     // <LikeProvider>
-            <FollowProvider initialFollowing>
+    <UserProvider>
+    <FollowProvider initialFollowing>
         <NotificationProvider>
             <PostsProvider>
             <App />
             </PostsProvider>
         </NotificationProvider>
     </FollowProvider>
+    </UserProvider>
 
     // {/* </LikeProvider> */}
 

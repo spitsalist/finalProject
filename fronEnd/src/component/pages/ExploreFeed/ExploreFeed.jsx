@@ -23,8 +23,6 @@ export const ExploreFeed = () => {
     const loadPosts = async () => {
       try {
         const response = await fetchPosts();
-        console.log("Posts received in ExploreFeed:", response.data.posts.length); // Проверяем количество постов
-
         setPosts(response.data.posts || []);
         setLoading(false);
       } catch (error) {
