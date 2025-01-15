@@ -43,7 +43,7 @@ export const NotificationList = () => {
 
   return (
     <>
-      <Box sx={{ maxHeight: "425px", overflowY: "auto" }}>
+      <Box sx={{ maxHeight: "485px", overflowY: "auto" }}>
         {notifications && notifications.length > 0 ? (
           [...notifications]
             .sort((a, b) => a.isRead === b.isRead ? 0 : a.isRead ? 1 : -1)

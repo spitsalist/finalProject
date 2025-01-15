@@ -12,7 +12,7 @@ export const useChat = (currentUserId, selectedUserId) => {
       const response = await fetchUsers();
       const allUsers = response?.data?.users || [];
       if (currentUserId) {
-        setUsers(allUsers.filter((user) => user._id !== currentUserId));
+        setUsers(allUsers.filter((user) => user?._id !== currentUserId));
       }
     } catch (error) {
       console.error("Error loading users:", error);

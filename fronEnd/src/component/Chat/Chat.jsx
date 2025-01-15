@@ -5,12 +5,14 @@ import { useChat } from "../../hooks/useChat";
 import { UsersList } from "../UsersList";
 import { ChatHeader } from "./ChatHeader";
 import { MessagesList } from "./MessagesList";
+import { useUser } from "../../context/userContext";
 
 export const Chat = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const chatBoxRef = useRef(null)
+  const {user} = useUser()
 
   useEffect(() => {
     chatSocket.on("connect", () => {
@@ -19,8 +21,6 @@ export const Chat = () => {
 
     chatSocket.emit("getCurrentUser", {}, (response) => {
       if (response.success) {
-        // console.log("Current user data:", response);
-
         setCurrentUserId(response.userId);
       } else {
         console.error("Error fetching current user ID:", response.error);
@@ -67,32 +67,54 @@ export const Chat = () => {
   }, [messages]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", height: "80vh", width: "100%" }}>
-      <UsersList users={users} selectedUserId={selectedUserId} onSelectUser={setSelectedUserId} />
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <ChatHeader selectedUserInfo={selectedUserInfo} />
+    <Box sx={{ height: "100%", overflowY: "auto" }}>
+      <UsersList
+        users={users}
+        selectedUserId={selectedUserId}
+        onSelectUser={setSelectedUserId}
+      />
+
+      {selectedUserId && (
         <Box
           sx={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "16px",
+            position: "fixed",
+            left: "540px", 
+            top: 0,
+            right: 0,
+            height: "85vh",
             backgroundColor: "#fff",
+            zIndex: 1200,
+            display: "flex",
+            flexDirection: "column",
+            borderLeft: '1px solid #ccc'
           }}
         >
-          <MessagesList
-            messages={messages}
-            currentUserId={currentUserId}
+          <ChatHeader
             selectedUserInfo={selectedUserInfo}
-            newMessage={newMessage}
-            setNewMessage={setNewMessage}
-            handleSendMessage={handleSendMessage}
-            chatBoxRef={chatBoxRef}
-            setMessages={setMessages}
-            users={users}
+            onClose={() => setSelectedUserId(null)} 
           />
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "16px",
+            }}
+          >
+            <MessagesList
+              messages={messages}
+              currentUserId={currentUserId}
+              selectedUserInfo={selectedUserInfo}
+              newMessage={newMessage}
+              setNewMessage={setNewMessage}
+              handleSendMessage={handleSendMessage}
+              chatBoxRef={chatBoxRef}
+              setMessages={setMessages}
+              users={users}
+              user={user}
+            />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };
-

@@ -13,8 +13,6 @@ export const PostContent = ({
   postImage, 
   initialLikesCount,
   initialLiked,
-  
-  
 }) => {
   const [likesCount, setLikesCount] = useState(initialLikesCount);
   const [isLiked, setIsLiked] = useState(initialLiked)

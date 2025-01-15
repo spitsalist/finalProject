@@ -20,14 +20,11 @@ import { NotificationList } from "../Notification/NotificationList";
 import { CreatePostModal } from "../pages/Post/createPost";
 import { Button } from "@mui/material";
 import { useNotifications } from "../Notification/NotificationContext";
-import { ChatSlideMenu } from "../Chat/ChatSlideMenu";
-
+import { UserSearch } from "../DropMenu/UserSearch";
+import { Chat } from "../Chat/Chat";
 
 export const SideMenu = ({profileImage}) => {
-  // console.log(profileImage);
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
-  const handleChatOpen = () => setIsChatMenuOpen((prev) => !prev)
-  const handleChatClose = () => setIsChatMenuOpen(false);
   const {notifications} = useNotifications()
   const unreadCount = Array.isArray(notifications)
   ? notifications.filter((n) => !n.isRead).length
@@ -43,7 +40,7 @@ export const SideMenu = ({profileImage}) => {
     {key:'home', text: "Home", icon: <img src={HomeIcon}/>, path: "/home" },
     {key: 'search', text: "Search", icon: <img src={SearchIcon} />, path: "/search", hasDropMenu: true },
     {key: "explore", text: "Explore", icon: <img src={ExploreIcon} />, path: "/explore" },
-    {key: "message", text: "Message", icon: <img src={ChatIcon} />, action: handleChatOpen},
+    {key: "message", text: "Message", icon: <img src={ChatIcon} />, hasDropMenu: true},
     { key: "notification",
       text: `Notification${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
       icon: <img src={NotificationsIcon} />,
@@ -140,6 +137,7 @@ export const SideMenu = ({profileImage}) => {
         isOpen={openMenu === "search"}
         onClose={closeMenu}
       >
+        <UserSearch/>
       </DropMenu>
 
       <DropMenu
@@ -148,11 +146,16 @@ export const SideMenu = ({profileImage}) => {
         onClose={closeMenu}
       >
         <NotificationList />
+      </DropMenu>
 
+      <DropMenu title='Messages'
+      isOpen={openMenu === 'message'}
+      onClose={closeMenu}
+      >
+      <Chat isOpen={openMenu === 'message'} onClose={closeMenu} />
       </DropMenu>
 
       <CreatePostModal isOpen={isModalOpen} onClose={handleCloseModal} />
-      <ChatSlideMenu isOpen={isChatMenuOpen} onClose={handleChatClose} />
       <Box sx={{ padding: "10px", marginTop: '60px' }}>
   <Button
     variant="outlined"

@@ -15,11 +15,10 @@ export const MessagesList = ({
   const getUserInfo = (userId) => {
     if (userId === currentUserId) {
       return {
-        name: "You",
-        avatar: selectedUserInfo?.profileImage
+        name: user?.username,
+        avatar: user?.profileImage
       };
-    }
-    
+    }    
     return {
       name: selectedUserInfo?.username,
       avatar: selectedUserInfo?.profileImage
@@ -35,12 +34,12 @@ export const MessagesList = ({
       }}
     >
       <Box
-        ref={chatBoxRef}
         sx={{
           flex: 1, 
           overflowY: "auto", 
           padding: "16px",
         }}
+        ref={chatBoxRef}
       >
         {selectedUserInfo && (
           <Box
