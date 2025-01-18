@@ -2,56 +2,57 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import { chatSocket } from "../../api/auth";
 import { useChat } from "../../hooks/useChat";
-import { UsersList } from "../UsersList";
 import { ChatHeader } from "./ChatHeader";
 import { MessagesList } from "./MessagesList";
 import { useUser } from "../../context/userContext";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Chat = () => {
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [selectedUserId, setSelectedUserId] = useState(null);
+  const {id: paramUserId} = useParams()
+  const {user} = useUser()
+  const currentUserId = user?._id
   const [newMessage, setNewMessage] = useState("");
   const chatBoxRef = useRef(null)
-  const {user} = useUser()
+  const navigate = useNavigate()
 
   useEffect(() => {
     chatSocket.on("connect", () => {
       console.log("Socket connected:", chatSocket.id);
     });
 
-    chatSocket.emit("getCurrentUser", {}, (response) => {
-      if (response.success) {
-        setCurrentUserId(response.userId);
-      } else {
-        console.error("Error fetching current user ID:", response.error);
-      }
-    });
+    // chatSocket.emit("getCurrentUser", {}, (response) => {
+    //   if (response.success) {
+    //     paramUserId(response.userId);
+    //   } else {
+    //     console.error("Error fetching current user ID:", response.error);
+    //   }
+    // });
 
     return () => {
       chatSocket.off("connect");
-      chatSocket.off("getCurrentUser");
+      // chatSocket.off("getCurrentUser");
     };
   }, []);
 
   useEffect(() => {
-    if (selectedUserId) {
+    if (paramUserId) {
       // console.log(selectedUserId);
-      chatSocket.emit("chatOpened", { chatUserId: selectedUserId });
+      chatSocket.emit("chatOpened", { chatUserId: paramUserId });
     }
-  }, [selectedUserId]);
+  }, [paramUserId]);
 
   const { users, messages, selectedUserInfo, setMessages } = useChat(
     currentUserId,
-    selectedUserId
+    paramUserId
   );
 
   const handleSendMessage = () => {
-    if (!newMessage.trim() || !selectedUserId) {
+    if (!newMessage.trim() || !paramUserId) {
       console.error("Recipient ID or message is missing");
       return;
     }
 
-    chatSocket.emit("sendMessage", { recipientId: selectedUserId, message: newMessage }, (response) => {
+    chatSocket.emit("sendMessage", { recipientId: paramUserId, message: newMessage }, (response) => {
       if (response.success) {
         setNewMessage("");
       } else {
@@ -66,15 +67,13 @@ export const Chat = () => {
     }
   }, [messages]);
 
-  return (
-    <Box sx={{ height: "100%", overflowY: "auto" }}>
-      <UsersList
-        users={users}
-        selectedUserId={selectedUserId}
-        onSelectUser={setSelectedUserId}
-      />
+  if(!paramUserId){
+    return <Box p={2}>Please select a user to Chat with.</Box>
+  }
 
-      {selectedUserId && (
+  return (
+    <Box sx={{ height: "100vh", overflowY: "auto" }}>
+      {paramUserId && (
         <Box
           sx={{
             position: "fixed",
@@ -83,15 +82,15 @@ export const Chat = () => {
             right: 0,
             height: "85vh",
             backgroundColor: "#fff",
-            zIndex: 1200,
+            // zIndex: 1200,
             display: "flex",
             flexDirection: "column",
-            borderLeft: '1px solid #ccc'
+            borderLeft: '1px solid #ccc',
           }}
         >
           <ChatHeader
             selectedUserInfo={selectedUserInfo}
-            onClose={() => setSelectedUserId(null)} 
+            onClose={() => navigate('/home')} 
           />
           <Box
             sx={{

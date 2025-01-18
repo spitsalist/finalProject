@@ -1,4 +1,3 @@
-import { fetchProfile } from "../../api/auth";
 import { PostMedia } from "./HomePage/PostMedia";
 import { Box, Typography, Avatar, Button, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";

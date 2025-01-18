@@ -17,7 +17,7 @@ export const NotificationContext = createContext(null);
       try {
         const response = await getNotifications(); 
         if (response.status === "success") {
-          console.log("Fetched notifications:", response.data.notifications);
+          // console.log("Fetched notifications:", response.data.notifications);
 
           setNotifications(response.data.notifications); 
           

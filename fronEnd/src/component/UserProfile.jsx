@@ -13,6 +13,13 @@ export const UserProfile = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  const handleNavigateToChat = ()=> {
+    if(profile._id){
+      navigate(`/messages/${profile._id}`)
+    }else{
+      console.error('user id not available')
+    }
+  }
   useEffect(() => {
     const loadUserProfileAndPosts = async () => {
       try {
@@ -86,6 +93,7 @@ export const UserProfile = () => {
           
             <Button
               variant="contained"
+              disabled={!profile._id}
               sx={{
                 textTransform: "none",
                 padding: "5px 30px",
@@ -93,7 +101,7 @@ export const UserProfile = () => {
                 backgroundColor: "#0095f6",
                 color: "#fff",
               }}
-              onClick={() => navigate(`/messages/${profile._id}`)}
+              onClick={handleNavigateToChat}
             >
               Message
             </Button>

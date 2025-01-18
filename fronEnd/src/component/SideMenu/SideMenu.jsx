@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   List,
@@ -13,7 +13,7 @@ import ExploreIcon from "../../assets/explore_icon.svg";
 import ChatIcon from "../../assets/Messenger_icon.svg";
 import NotificationsIcon from "../../assets/like_icon.svg";
 import AddBoxIcon from "../../assets/create_icon.svg";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from '../../assets/ICHGRA.svg';
 import { DropMenu } from "../DropMenu/DropMenu";
 import { NotificationList } from "../Notification/NotificationList";
@@ -21,10 +21,9 @@ import { CreatePostModal } from "../pages/Post/createPost";
 import { Button } from "@mui/material";
 import { useNotifications } from "../Notification/NotificationContext";
 import { UserSearch } from "../DropMenu/UserSearch";
-import { Chat } from "../Chat/Chat";
+import { UsersList } from "../UsersList";
 
-export const SideMenu = ({profileImage}) => {
-  const [isChatMenuOpen, setIsChatMenuOpen] = useState(false); 
+export const SideMenu = ({profileImage, exernalOpenMenu, setExternalOpenMenu, users, selectedUserId, onSelectUser}) => {
   const {notifications} = useNotifications()
   const unreadCount = Array.isArray(notifications)
   ? notifications.filter((n) => !n.isRead).length
@@ -36,11 +35,15 @@ export const SideMenu = ({profileImage}) => {
   const navigate = useNavigate();
   const [openMenu, setOpenMenu] = useState(null); 
 
+  useEffect(()=>{
+    setOpenMenu(exernalOpenMenu)
+  },[exernalOpenMenu])
+
   const menuItems = [
     {key:'home', text: "Home", icon: <img src={HomeIcon}/>, path: "/home" },
     {key: 'search', text: "Search", icon: <img src={SearchIcon} />, path: "/search", hasDropMenu: true },
     {key: "explore", text: "Explore", icon: <img src={ExploreIcon} />, path: "/explore" },
-    {key: "message", text: "Message", icon: <img src={ChatIcon} />, hasDropMenu: true},
+    {key: "message", text: "Message", icon: <img src={ChatIcon} />,path: '/messages', hasDropMenu: true},
     { key: "notification",
       text: `Notification${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
       icon: <img src={NotificationsIcon} />,
@@ -55,18 +58,23 @@ export const SideMenu = ({profileImage}) => {
       action();
     } else if (hasDropMenu) {
       setOpenMenu(openMenu === key ? null : key);
+      setExternalOpenMenu(openMenu === key ? null : key)
     } else if (path){
       navigate(path);
       setOpenMenu(null);
+      setExternalOpenMenu(null)
     }
   };
 
   const closeMenu = () => {
     setOpenMenu(null);
+    setExternalOpenMenu(null)
+    if(location.pathname.startsWith('/messages')){
+      navigate('/home')
+    }
   };
 
   return (
-    
     <Box
       sx={{
         display: "flex",
@@ -95,14 +103,16 @@ export const SideMenu = ({profileImage}) => {
       <List sx={{ display: "flex", flexDirection: "column" }}>
         {menuItems.map((item) => (
           <ListItem
-            button
+            component={Button}
             key={item.key}
             onClick={() => handleItemClick(item.path, item.hasDropMenu, item.action, item.key)}
             sx={{
               display: "flex",
               alignItems: "center",
               padding: '10px',
-              cursor:'pointer'
+              cursor:'pointer',
+              textTransform:'none',
+              color:'#262626'
             }}
           >
             <ListItemIcon sx={{ minWidth: '40px' }}>
@@ -111,9 +121,8 @@ export const SideMenu = ({profileImage}) => {
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
-
         <ListItem 
-          button
+          component={Button}
           key="Profile"
           onClick={() => navigate("/profile")}
           sx={{
@@ -121,9 +130,10 @@ export const SideMenu = ({profileImage}) => {
             alignItems: "center",
             marginTop: "40px",
             padding: '10px',
-            cursor:'pointer'
+            cursor:'pointer',
+            textTransform:'none',
+            color:'#262626'
           }}
-
         >
           <ListItemIcon sx={{ minWidth: '45px' }}>
             <Avatar src={profileImage} alt="profile"/>
@@ -152,7 +162,11 @@ export const SideMenu = ({profileImage}) => {
       isOpen={openMenu === 'message'}
       onClose={closeMenu}
       >
-      <Chat isOpen={openMenu === 'message'} onClose={closeMenu} />
+        <UsersList 
+        users={users}
+        selectedUserId={selectedUserId}
+        onSelectUser={onSelectUser}
+        />
       </DropMenu>
 
       <CreatePostModal isOpen={isModalOpen} onClose={handleCloseModal} />
@@ -162,7 +176,7 @@ export const SideMenu = ({profileImage}) => {
     color="error"
     onClick={() => {
       localStorage.removeItem("token");
-      navigate("/login", replace);
+      navigate("/login", {replace: true});
     }}
     sx={{
       width: "80px",
@@ -173,7 +187,7 @@ export const SideMenu = ({profileImage}) => {
   >
     Logout
   </Button>
-</Box>
+    </Box>
     </Box>
   );
 };

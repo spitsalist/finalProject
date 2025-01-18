@@ -111,7 +111,7 @@ export const fetchUsers = async () => {
     const response = await axios.get(`${BASE_URL}/user/all`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("API response:", response.data);
+    // console.log("API response:", response.data);
     return response.data; 
   } catch (error) {
     throw error;

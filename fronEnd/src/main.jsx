@@ -18,7 +18,6 @@ createRoot(document.getElementById('root')).render(
         </NotificationProvider>
     </FollowProvider>
     </UserProvider>
-
     // {/* </LikeProvider> */}
 
 )
