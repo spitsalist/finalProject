@@ -13,9 +13,12 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true)
+    setError('')
     try {
       const resultData = await login(email, password);
       const { token } = resultData.data;
@@ -23,9 +26,9 @@ const LoginPage = () => {
       setSuccessMessage("Login successfully");
           localStorage.setItem('token', token);
 
-      setTimeout(() => {
+      // setTimeout(() => {
          navigate('/home', {replace:true});
-      }, 2000)
+      // }, 1000)
      
     } catch (error) {
       setError('Invalid email or password', error);
@@ -54,9 +57,10 @@ const LoginPage = () => {
               color="primary"
               fullWidth
               type="submit"
+              disabled={isSubmitting}
               style={{ marginTop: '20px', borderRadius: '8px' }}
             >
-              Log In
+              {isSubmitting ? 'Loading...' : 'Log In'}
             </Button>
 
             {error && <p>{error}</p>}
