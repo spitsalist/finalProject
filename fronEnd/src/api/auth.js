@@ -338,7 +338,7 @@ export const joinUserRoom = (userId) => {
 }
 
 export const fetchNotifications =(setNotifications) =>{
-  console.log("Fetching notifications...");
+  // console.log("Fetching notifications");
 
   socket.emit('fetchNotifications', (response) => {
     if(response.success && Array.isArray(response.notifications)){

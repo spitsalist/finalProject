@@ -13,8 +13,7 @@ export const ConfirmResetPassword = () => {
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search)
   const token = queryParams.get('token')
-
-  // console.log('recived token:', token)
+  const [isConfirm, setIsConfirm] = useState(false)
 
   if (!token) {
     setErrorMessage("Token is missing or invalid.");
@@ -23,19 +22,21 @@ export const ConfirmResetPassword = () => {
 
   const handleConfirmResetPassword = async (e) => {
     e.preventDefault();
+    setIsConfirm(true)
+    setErrorMessage('')
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
+      setIsConfirm(false)
       return;
     }
-
     try {
       await confirmResetPassword(token, password); 
       setSuccessMessage("Your password has been reset successfully!");
-      setTimeout(() => navigate("/login"),{replace:true}, 2000); 
+      navigate("/login"),{replace:true} 
     } catch (error) {
       console.error('Error during password reset:', error); 
-
+      setIsConfirm(false)
     }
   };
 
@@ -68,10 +69,11 @@ export const ConfirmResetPassword = () => {
             type="submit"
             variant="contained"
             color="primary"
+            disabled={isConfirm}
             fullWidth
             sx={{ marginTop: "20px", borderRadius: "8px" }}
           >
-            Reset Password
+            {isConfirm ? 'Loading...' : 'Reset Password'}
           </Button>
         </form>
       </Box>

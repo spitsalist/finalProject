@@ -10,22 +10,24 @@ import { resetPassword } from "../../../api/auth";
 export const ResetPassword = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const navigate = useNavigate();
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    console.log("Reset password sent to:", emailOrUsername);
+    setIsSubmitting(true)
+    // console.log("Reset password sent to:", emailOrUsername);
     try {
       const resultData = await resetPassword(emailOrUsername);
       localStorage.setItem("token", resultData.data.token);
       setSuccessMessage("Password reset link sent successfully!");
-      setTimeout(() => navigate("/login"), 3000);
+      navigate("/login", {replace:true})
     } catch (error) {
       console.error(
-        "No email or username found in database, please try again.",
-        error
-      );
+        "No email or username found in database, please try again.",error)
+    } finally{
+      setIsSubmitting(false)
     }
   };
 
@@ -95,6 +97,7 @@ export const ResetPassword = () => {
                   color="primary"
                   fullWidth
                   type="submit"
+                  disabled={isSubmitting}
                   sx={{
                     marginTop: "20px",
                     marginBottom: "20px",
@@ -102,7 +105,7 @@ export const ResetPassword = () => {
                     textTransform: "none",
                   }}
                 >
-                  Reset Your Password
+                  {isSubmitting ? 'Loading...' : 'Reset Your Password'}
                 </Button>
                 {successMessage && (
                   <Typography

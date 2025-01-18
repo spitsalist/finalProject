@@ -11,11 +11,12 @@ export const SignUpPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null)
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
       e.preventDefault();
-    
+      setIsSubmitting(true)
       try {
         const resultData = await register(fullName, username, email, password); 
         localStorage.setItem('token', resultData.data.token); 
@@ -23,6 +24,8 @@ export const SignUpPage = () => {
         navigate('/home'); 
       } catch (err) {
         setError('Registration failed. Please try again.');
+      }finally{
+        setIsSubmitting(false)
       }
     };
 
@@ -86,9 +89,10 @@ export const SignUpPage = () => {
                             color="primary"
                             fullWidth
                             type="submit"
+                            disabled={isSubmitting}
                             style={{ marginTop: '20px', borderRadius: '8px' }}
                         >
-                            Sign Up
+                            {isSubmitting ? 'Loading...' : 'Sign Up'}
                         </Button>
                     </form>
                 </Box>

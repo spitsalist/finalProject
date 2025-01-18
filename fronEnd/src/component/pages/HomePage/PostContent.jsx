@@ -18,7 +18,6 @@ export const PostContent = ({
   const [isLiked, setIsLiked] = useState(initialLiked)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const {comments} = useComments(postId, 'userA')
-  const commentsContainerRef = useRef(null)
 
   const handleLikeClick = (newLikeState) => {
     setIsLiked(newLikeState.isLiked);
