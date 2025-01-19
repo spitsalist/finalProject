@@ -20,9 +20,9 @@ export const Comment = ({
   const [isProcessing, setIsProcessing] = useState(false);
 
   const isAuthor = comment.user._id === currentUserId;
-  const canReply =
-    !isAuthor ||
-    (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
+//   const canReply =
+//     !isAuthor ||
+//     (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
 
   const handleLike = async () => {
     if (isProcessing) return;

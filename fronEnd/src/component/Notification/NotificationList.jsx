@@ -22,8 +22,7 @@ export const NotificationList = () => {
       const modalData = {
         postId: notif.relatedPost?._id || null,
         user: notif.relatedUser || notif.user || {},
-        // commentId: notif.relatedComment?._id || null,
-        // commentText: notif.relatedComment?.text || "No comment text available",
+        commentId: notif.selectedPost?._id || null,
 
         // caption: notif.relatedPost?.caption || "No caption available",
         postImage: notif.relatedPost?.image || null,
@@ -144,7 +143,7 @@ export const NotificationList = () => {
   <PostModal
     isOpen={isModalOpen}
     onClose={handleCloseModal}
-    // commentId={selectedPost.commentId}
+    commentId={selectedPost.commentId}
     postId={selectedPost.postId}
     user={selectedPost.user}
     // caption={selectedPost.caption}

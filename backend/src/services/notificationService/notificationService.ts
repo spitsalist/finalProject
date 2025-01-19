@@ -90,5 +90,6 @@ export const replyNotification = async(userId:string, username:string, postId:st
     if(userId === parentCommentId) return
     const content = `${username} replied to your comment`
     await createNotification(parentCommentId, 'reply', content, userId, postId, commentId)
+    console.log('parentCommentId', parentCommentId)
 }
 

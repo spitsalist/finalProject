@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { CardContent, Divider, Typography, Box, IconButton } from "@mui/material";
 import { PostActions } from "./PostActions";
 import msgIco from "../../../assets/msg_ico.svg";
