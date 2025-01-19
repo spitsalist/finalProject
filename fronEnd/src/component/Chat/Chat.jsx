@@ -20,23 +20,13 @@ export const Chat = () => {
       console.log("Socket connected:", chatSocket.id);
     });
 
-    // chatSocket.emit("getCurrentUser", {}, (response) => {
-    //   if (response.success) {
-    //     paramUserId(response.userId);
-    //   } else {
-    //     console.error("Error fetching current user ID:", response.error);
-    //   }
-    // });
-
     return () => {
       chatSocket.off("connect");
-      // chatSocket.off("getCurrentUser");
     };
   }, []);
 
   useEffect(() => {
     if (paramUserId) {
-      // console.log(selectedUserId);
       chatSocket.emit("chatOpened", { chatUserId: paramUserId });
     }
   }, [paramUserId]);

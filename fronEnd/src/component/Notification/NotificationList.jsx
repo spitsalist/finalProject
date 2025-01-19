@@ -15,14 +15,16 @@ export const NotificationList = () => {
     if (notif.type === "follow") {
       return;
     }
-    console.log('notif:', notif)
+    // console.log('notif:', notif)
     try {
       await markAsRead(notif._id);
   
       const modalData = {
         postId: notif.relatedPost?._id || null,
         user: notif.relatedUser || notif.user || {},
-        // commentId: notif.relatedComment || null,
+        // commentId: notif.relatedComment?._id || null,
+        // commentText: notif.relatedComment?.text || "No comment text available",
+
         // caption: notif.relatedPost?.caption || "No caption available",
         postImage: notif.relatedPost?.image || null,
         likesCount: notif.relatedPost?.likes?.length || 0,
@@ -142,9 +144,7 @@ export const NotificationList = () => {
   <PostModal
     isOpen={isModalOpen}
     onClose={handleCloseModal}
-    type={selectedPost.type}
     // commentId={selectedPost.commentId}
-
     postId={selectedPost.postId}
     user={selectedPost.user}
     // caption={selectedPost.caption}

@@ -43,15 +43,14 @@ export const commentOnPost = async (req: any, res: Response) => {
       if (post.user.toString() !== userId) {
         await commentNotification(userId, username, comment._id as string, postId, post.user.toString());
       }
-      if (
-        parentCommentId &&
-        parentComment &&
+      if (parentCommentId && parentComment){
+        if(
         parentComment.user.toString() !== userId &&
-        parentComment.user.toString() !== post.user.toString()
-      ) {
+        parentComment.user.toString() !== post.user.toString())
+       {
         await replyNotification(userId, username, postId, comment._id as string, parentComment.user.toString());
       }
-  
+    }
       return sendSuccess(res, { comment }, 'Comment created successfully', 200);
     } catch (error: any) {  
       return sendError(res, 'Error creating comment', 500, error);
@@ -100,12 +99,8 @@ export const likeComment = async (req: any, res: Response) => {
     const { commentId } = req.body;
     const userId = req.user.id;
     const username = req.user.username;
-    console.log("User ID:", userId);
-    console.log("Comment ID:", commentId);
-
 
     const comment = await Comment.findById(commentId).populate('post')
-    console.log("Comment Data:", comment);
     if (!comment || !comment.post) {
       return sendError(res, "Comment not found", 404);
     }
@@ -132,12 +127,6 @@ export const likeComment = async (req: any, res: Response) => {
     await like.save();
     const likeCounter = await Like.countDocuments({ comment: commentId })
     await createLikeNotification(userId, username, commentId, comment.user.toString(), comment.post._id.toString());
-    console.log("Notification parameters:", {
-      userId,
-      username,
-      commentId,
-      commentUserId: comment.user.toString(),
-  });
     return sendSuccess(
       res,
       { likeCounter, isLiked: true },
