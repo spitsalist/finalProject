@@ -1,34 +1,8 @@
-import { FollowButton } from '../../Buttons/FollowButton/FollowButton';
 import React from "react";
-import { Box, Typography, Grid, Avatar } from "@mui/material";
+import { Box, Typography, Grid } from "@mui/material";
 import { usePosts } from "../../../context/PostContext"
 import { PostLoader } from "./PostLoader";
 import { PostCard } from "./PostCard";
-
-export const PostHeader = ({ user, currentUserId }) => {  
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px', justifyContent: 'space-between' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar 
-          src={user.profileImage} 
-          alt={user?.username} 
-          sx={{ marginRight: '10px' }} 
-        />
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-            {user?.username}
-          </Typography>
-        </Box>
-      </Box>
-      <FollowButton 
-        userId={user._id} 
-        initialFollowing={user.isFollowing } 
-        username={user.username} 
-        currentUserId={currentUserId}
-      />
-    </Box>
-  );
-};
 
 export const HomePage = () => {
   const { posts, loading} = usePosts(); 

@@ -1,4 +1,4 @@
-import { PostHeader } from "./HomePage"
+import { PostHeader } from "../Post/PostHeader"
 import { PostMedia } from "./PostMedia"
 import { PostContent } from "./PostContent"
 import { Card, Grid, Typography } from "@mui/material";
@@ -7,7 +7,6 @@ import { useState, useEffect, useMemo } from "react";
 
 export const PostCard = ({ post }) => {
   const [currentId, setCurrentId] = useState(''); 
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
