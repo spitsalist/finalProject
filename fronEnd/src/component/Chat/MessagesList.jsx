@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar, Button } from "@mui/material";
-import React from "react";
+import { ChatEmojiPicker } from "./ChatEmojiPicker";
 
 export const MessagesList = ({
   messages,
@@ -160,8 +160,6 @@ export const MessagesList = ({
             borderTop: "1px solid #ddd",
             position: "sticky", 
             bottom: 0, 
-            backgroundColor: "#fff", 
-            zIndex: 10, 
           }}
         >
           <input
@@ -171,13 +169,14 @@ export const MessagesList = ({
             placeholder="Write a message"
             style={{
               flex: 1,
-              padding: "10px",
+              padding: "10px 45px 10px 10px",
               border: "1px solid #ddd",
               borderRadius: "5px",
               fontSize: "16px",
               marginRight: "8px",
             }}
           />
+          <ChatEmojiPicker  setNewMessage={setNewMessage}/>
           <button
             onClick={handleSendMessage}
             style={{

@@ -4,6 +4,7 @@ import { PostMedia } from "../HomePage/PostMedia";
 import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
 import { useComments } from "../../../hooks/useComments";
 import { Comment } from "../Comment/Comment"; 
+import { ChatEmojiPicker } from "../../Chat/ChatEmojiPicker";
 
 const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
   <img
@@ -72,7 +73,7 @@ export const PostModal = ({
       <Box
         sx={{
           display: "flex",
-          width: "800px",
+          width: "850px",
           margin: "0 auto",
           marginTop: "50px",
           bgcolor: "background.paper",
@@ -153,6 +154,8 @@ export const PostModal = ({
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
+                  <ChatEmojiPicker setNewMessage={setNewComment} />
+
                     <Button
                       variant="contained"
                       color="primary"
