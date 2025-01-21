@@ -2,7 +2,7 @@ import { Box } from "@mui/system"
 import EmojiPicker from "emoji-picker-react"
 import { useEffect, useRef, useState } from "react"
 
-export const ChatEmojiPicker = ({setNewMessage}) =>{
+export const ChatEmojiPicker = ({setNewMessage, setNewComment}) =>{
     const [showPicker, setShowPicker] = useState(false)
     const pickerRef = useRef(null)
 

@@ -5,7 +5,7 @@ const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) =>
   <img
     src={profileImage}
     alt={altText}
-    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px" }}
+    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px", cursor:'pointer' }}
   />
 );
 
@@ -15,7 +15,8 @@ export const Comment = ({
 //   onReply,
   onLike,
   renderReplies,
-  isLiked
+  isLiked,
+  onUsernameClick
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -39,7 +40,9 @@ export const Comment = ({
   return (
     <Box key={comment._id} sx={{ mb: 4 }}>
       <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+        <Typography variant="body2" sx={{ fontWeight: "bold", cursor:'pointer', transition: 'color 0.3 ease','&:hover': {color:'primary.main'} }}
+        onClick={() => onUsernameClick(comment.user._id)}
+        >
           <UserAvatar profileImage={comment.user?.profileImage} size="24px" />
           {comment.user?.username}
         </Typography>

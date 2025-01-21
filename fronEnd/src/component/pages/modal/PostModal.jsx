@@ -5,12 +5,13 @@ import { FollowButton } from "../../Buttons/FollowButton/FollowButton";
 import { useComments } from "../../../hooks/useComments";
 import { Comment } from "../Comment/Comment"; 
 import { ChatEmojiPicker } from "../../Chat/ChatEmojiPicker";
+import { useNavigate } from "react-router-dom";
 
 const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) => (
   <img
     src={profileImage}
     alt={altText}
-    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px" }}
+    style={{ width: size, height: size, borderRadius: "50%", marginRight: "8px", cursor:'pointer' }}
   />
 );
 
@@ -25,6 +26,10 @@ export const PostModal = ({
   currentUserId,
   commentId,
 }) => {
+  const navigate = useNavigate()
+  const handleNavigateToProfile =()=>{
+    navigate(`/profile/${user._id}`)
+  }
   const [newComment, setNewComment] = useState("");
   const {
     comments,
@@ -62,6 +67,7 @@ export const PostModal = ({
         onLike={toggleLikeComment}
         renderReplies={(id) => renderComments(id)}
         isLiked={comment.isLiked}
+        onUsernameClick={handleNavigateToProfile}
       />
     ));
   };
@@ -120,12 +126,11 @@ export const PostModal = ({
             }}
           >
             <UserAvatar profileImage={user?.profileImage} altText={user?.username} />
-            <Typography variant="h6">
+            <Typography variant="h6" onClick={handleNavigateToProfile} sx={{cursor:'pointer', transition: 'color 0.3 ease', '&:hover': {color:'primary.main'}}}>
               <strong>{user?.username}</strong>
             </Typography>
             <FollowButton userId={user._id} username={user.username} />
           </Box>
-
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
             {caption}
           </Typography>
@@ -155,7 +160,6 @@ export const PostModal = ({
                 endAdornment: (
                   <InputAdornment position="end">
                   <ChatEmojiPicker setNewMessage={setNewComment} />
-
                     <Button
                       variant="contained"
                       color="primary"
