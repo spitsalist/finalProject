@@ -176,7 +176,7 @@ export const SideMenu = ({profileImage, exernalOpenMenu, setExternalOpenMenu, us
     color="error"
     onClick={() => {
       localStorage.removeItem("token");
-      navigate("/login", {replace: true});
+      navigate('/');
     }}
     sx={{
       width: "80px",

@@ -7,7 +7,7 @@ import { PostCard } from "./PostCard";
 export const HomePage = () => {
   const { posts, loading} = usePosts(); 
 
-  if (loading) return <PostLoader />;
+  if (loading) return  <PostLoader />;
 
   return (
     <Box sx={{ padding: "25px 80px", marginBottom: "85px", width: "700px" }}>

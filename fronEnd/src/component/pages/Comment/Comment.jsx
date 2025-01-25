@@ -12,7 +12,6 @@ const UserAvatar = ({ profileImage, size = "40px", altText = "User Avatar" }) =>
 export const Comment = ({
   comment,
   currentUserId,
-//   onReply,
   onLike,
   renderReplies,
   isLiked,
@@ -20,10 +19,7 @@ export const Comment = ({
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const isAuthor = comment.user._id === currentUserId;
-//   const canReply =
-//     !isAuthor ||
-//     (isAuthor && comment.replies?.some((reply) => reply.user._id !== currentUserId));
+   comment.user._id === currentUserId;
 
   const handleLike = async () => {
     if (isProcessing) return;
@@ -59,12 +55,6 @@ export const Comment = ({
       </Box>
 
       <Typography variant="body2">{comment.text}</Typography>
-
-      {/* {canReply && (
-        <Button size="small" onClick={() => onReply(comment._id)} sx={{ mt: 1 }}>
-          Reply
-        </Button>
-      )} */}
 
       {renderReplies(comment._id)}
     </Box>

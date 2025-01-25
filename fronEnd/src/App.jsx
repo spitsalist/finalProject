@@ -11,12 +11,12 @@ import { NotFoundPage } from './component/pages/NotFoundPage';
 
 const PrivateRoute = ({ element }) => {
   const token = Boolean(localStorage.getItem("token"));
-  return token ? element : <Navigate to="/login" />;
+  return token ? element : <Navigate to="/" />;
 };
 
 function App() {
   const routes = [
-    { path: "/login", component: <LoginPage /> },
+    { path: "/", component: <LoginPage /> },
     { path: "/register", component: <SignUpPage /> },
     { path: "/reset-password", component: <ResetPassword /> },
     { path: "/confirm-reset-password", component: <ConfirmResetPassword /> },

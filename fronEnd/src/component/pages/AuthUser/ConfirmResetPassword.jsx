@@ -33,7 +33,7 @@ export const ConfirmResetPassword = () => {
     try {
       await confirmResetPassword(token, password); 
       setSuccessMessage("Your password has been reset successfully!");
-      navigate("/login"),{replace:true} 
+      navigate("/")
     } catch (error) {
       console.error('Error during password reset:', error); 
       setIsConfirm(false)

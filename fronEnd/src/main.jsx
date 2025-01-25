@@ -4,11 +4,9 @@ import App from './App.jsx'
 import { FollowProvider } from './context/FollowContext.jsx'
 import { NotificationProvider } from './component/Notification/NotificationContext.jsx'
 import { PostsProvider } from './context/PostContext.jsx'
-// import { LikeProvider } from './context/LikeContext.jsx'
 import { UserProvider } from './context/userContext';
 
 createRoot(document.getElementById('root')).render(
-    // <LikeProvider>
     <UserProvider>
     <FollowProvider initialFollowing>
         <NotificationProvider>
@@ -18,6 +16,4 @@ createRoot(document.getElementById('root')).render(
         </NotificationProvider>
     </FollowProvider>
     </UserProvider>
-    // {/* </LikeProvider> */}
-
 )

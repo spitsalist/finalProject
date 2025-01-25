@@ -27,7 +27,7 @@ const LoginPage = () => {
           localStorage.setItem('token', token);
 
       // setTimeout(() => {
-         navigate('/home', {replace:true});
+         navigate('/home');
       // }, 1000)
      
     } catch (error) {
