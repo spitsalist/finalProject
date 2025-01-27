@@ -1,4 +1,3 @@
-import "./App.css";
 import { btnTheme } from "./component/Buttons/Buttons";
 import LoginPage from "./component/pages/AuthUser/loginPage";
 import { ThemeProvider } from "@mui/material/styles";

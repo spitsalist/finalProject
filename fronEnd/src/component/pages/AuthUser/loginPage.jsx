@@ -6,6 +6,7 @@ import { login } from '../../../api/auth';
 import { useNavigate } from 'react-router-dom';
 import { SectionDivider } from './SectionDivider';
 import { InputField } from './CustomTextField';
+import { usePosts } from '../../../context/PostContext';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const {loadPosts} = usePosts()
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -23,8 +25,9 @@ const LoginPage = () => {
       const resultData = await login(email, password);
       const { token } = resultData.data;
       // console.log('Login successfully', resultData.data);
+      localStorage.setItem('token', token);
       setSuccessMessage("Login successfully");
-          localStorage.setItem('token', token);
+          await loadPosts()
 
       // setTimeout(() => {
          navigate('/home');

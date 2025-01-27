@@ -7,8 +7,9 @@ export const PostsProvider = ({ children }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+
     const loadPosts = async () => {
+      setLoading(true)
       try {
         const fetchedPosts = await getTimePost();
         console.log('posts loadet:', fetchedPosts)
@@ -20,11 +21,12 @@ export const PostsProvider = ({ children }) => {
         setLoading(false);
       }
     };
+    useEffect(() => {
     loadPosts();
   }, []);
 
   return (
-    <PostsContext.Provider value={{ posts, loading }}>
+    <PostsContext.Provider value={{ posts, loading, loadPosts }}>
       {children}
     </PostsContext.Provider>
   );
