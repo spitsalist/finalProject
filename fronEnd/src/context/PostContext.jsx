@@ -12,7 +12,7 @@ export const PostsProvider = ({ children }) => {
       setLoading(true)
       try {
         const fetchedPosts = await getTimePost();
-        console.log('posts loadet:', fetchedPosts)
+        // console.log('posts loadet:', fetchedPosts)
 
         setPosts(fetchedPosts.data.posts || []);
       } catch (error) {

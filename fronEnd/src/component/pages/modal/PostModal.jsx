@@ -129,7 +129,9 @@ export const PostModal = ({
             <Typography variant="h6" onClick={handleNavigateToProfile} sx={{cursor:'pointer', transition: 'color 0.3 ease', '&:hover': {color:'primary.main'}}}>
               <strong>{user?.username}</strong>
             </Typography>
-            <FollowButton userId={user._id} username={user.username} />
+            {user?._id !== currentUserId && (
+             <FollowButton userId={user._id} username={user.username} />
+            )}
           </Box>
           <Typography variant="body2" sx={{ marginBottom: "10px" }}>
             {caption}

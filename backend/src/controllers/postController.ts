@@ -55,8 +55,6 @@ export const addPost = async (req: any, res: Response) => {
           .populate("image")
           .lean()
 
-
-
       } else if (userId) {
         posts = await getAllPosts(res, userId, true);
         if(!posts.length){
@@ -69,7 +67,6 @@ export const addPost = async (req: any, res: Response) => {
       if (!posts || posts.length === 0) {
         return sendSuccess(res, {posts: []}, 'no post aviable', 404);
       }
-  
       return sendSuccess(res, { posts }, "Posts fetched successfully");
     } catch (error) {
       sendError(res, "Error fetching posts", 500, error);

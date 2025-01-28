@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { fetchPosts } from '../../../api/auth';
+import { PostModal } from '../modal/PostModal';
 
 const imageStyles = [
   { width: '280px', height: '280px', gridRow: 'span 1' },
@@ -18,11 +19,13 @@ const imageStyles = [
 export const ExploreFeed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPost, setSelectedPost] = useState(null)
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
         const response = await fetchPosts();
+        console.log('respnose', response.data.posts)
         setPosts(response.data.posts || []);
         setLoading(false);
       } catch (error) {
@@ -32,6 +35,18 @@ export const ExploreFeed = () => {
     };
     loadPosts();
   }, []);
+  
+  const handlePostClick = (post) => {
+    setSelectedPost({
+      postId: post._id,
+      user: post.user,
+      postImage: post.image,
+      caption: post.caption || "",
+      likesCount: post.likes?.length || 0,
+      commentId: null,
+    });
+  };
+  
 
   if (loading) {
     return (
@@ -67,11 +82,26 @@ export const ExploreFeed = () => {
                 ...style,
                 objectFit: 'cover',
                 borderRadius: '5px',
+                cursor:'pointer'
               }}
+              onClick={() => handlePostClick(post)}
             />
           );
         })}
         </Box>
+      )}
+      {selectedPost && (
+        <PostModal 
+        isOpen={Boolean(selectedPost)}
+        onClose={() => setSelectedPost(null)}
+        postId={selectedPost.postId}
+        user={selectedPost.user}
+        caption={selectedPost.caption}
+        postImage={selectedPost.postImage}
+        likesCount={selectedPost.likesCount}
+        currentUserId='userA'
+        commentId={selectedPost.commentId}
+         />
       )}
     </Box>
   );

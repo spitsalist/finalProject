@@ -7,12 +7,7 @@ export const FollowProvider = ({ children, initialFollowing ={} }) => {
   const [followingState, setFollowingState] = useState(initialFollowing);
   const [loadingState, setLoadingState] = useState({});
 
-  useEffect(() =>{
-    
-  })
-
   const toggleFollow = async (userId) => {
-    console.log("API Request Data:", { userId });
     try {
       setLoadingState((prev) => ({ ...prev, [userId]: true }));
       const isFollowing = followingState[userId] || false;
